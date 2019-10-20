@@ -5,3 +5,5 @@ class aaConfig:
     loginPasswordFieldId     = "sso-login-password-input"
     loginButtonFieldClass    = "sso-button"
     loginButtonFieldType     = "submit"
+    loginPrompt1             = "userName"
+    loginPrompt2             = "ng-star-inserted"

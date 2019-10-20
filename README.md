@@ -19,7 +19,7 @@ git clone https://github.com/ambersun1234/AutoAA.git
 + copy [./config/config.ini.example](./config/config.ini.example) and rename to `config.ini` and place it under `./config`
 + modify the user information inside `config.ini`
 + run program
-    + simply `python3 air.py`
+    + simply `python3 air.py` or `python3 air.py show`
 
 ## License
 + This project is licensed under MIT License - see the [LICENSE](https://github.com/ambersun1234/AutoAA/blob/master/LICENSE) file for detail
