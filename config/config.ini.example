@@ -1,3 +1,7 @@
-[AA]
-email    = YOUR@EMAIL.com
-password = YOURPASSWORD
+[login]
+email     = YOUR@EMAIL.com
+password  = YOURPASSWORD
+
+[flight]
+departure = DEPARTURE
+arrival   = ARRIVAL

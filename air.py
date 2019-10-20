@@ -15,8 +15,14 @@ class AutoAA:
     def __init__(self, show):
         self.browser = None
         self.pr = aaConfigParser()
-        self.url = "https://www.airasia.com/en/gb"
+        self.url = "https://www.airasia.com/zh/tw"
 
+        self.departureFullNameList = dict()
+        self.departureAbbrevNameList = dict()
+        self.arrivalFullNameList = dict()
+        self.arrivalAbbrevNameList = dict()
+
+        print("AutoAA: Start selenium on {}... ".format(self.url), end="")
         self.pr.__run__() # read user's config
 
         try:
@@ -34,19 +40,47 @@ class AutoAA:
                     executable_path='/usr/local/bin/chromedriver'
                 )
         except selenium.common.exceptions.WebDriverException as e:
-            print("chromedriver need to be in /usr/local/bin. exit AutoAA")
+            print("AutoAA: Chromedriver need to be in /usr/local/bin. exit")
             sys.exit(1)
         except selenium.common.exceptions.SessionNotCreatedException as e:
-            print("chromedriver version not matching. exit AutoAA")
+            print("AutoAA: Chromedriver version not matching. exit")
             sys.exit(1)
 
         try:
             # start
             self.browser.get(self.url)
-            print("Start selenium done")
+            print("done")
         except:
-            print("Error when starting selenium")
+            print("error")
             sys.exit(1)
+
+    def getDepartureList(self):
+        print("AutoAA: Get departure list... ", end="")
+        # bring up departure list
+        WebDriverWait(self.browser, 3).until(
+            EC.element_to_be_clickable(
+                (By.ID, "home-origin-autocomplete-heatmap")
+            )
+        ).click()
+
+        # get all departure name
+        items = self.browser.find_element_by_id(
+            "home-origin-autocomplete-heatmapstation-combobox"
+        ).find_elements_by_tag_name("li")
+
+        # write to internal array list
+        counter = 0
+        for element in items:
+            tempF, tempA = element.text.split("\n")
+            self.departureFullNameList[counter]   = tempF
+            self.departureAbbrevNameList[counter] = tempA
+            counter += 1
+
+        if not self.departureFullNameList or not self.departureAbbrevNameList:
+            print("failed. exit")
+            sys.exit(1)
+        else:
+            print("done")
 
     def __login__(self):
         # bring up login page
@@ -71,7 +105,7 @@ class AutoAA:
                 EC.element_to_be_clickable((By.ID, aaConfig.loginPasswordFieldId))
             ).send_keys(self.pr.loginPassword)
 
-            print("Logging to air asia...", end="")
+            print("AutoAA: Logging to air asia... ", end="")
             WebDriverWait(self.browser, 3).until(
                 EC.element_to_be_clickable(
                     (
@@ -83,7 +117,7 @@ class AutoAA:
                 )
             ).click()
         except selenium.common.exceptions.TimeoutException as e:
-            print("Error occurred when logging in. exit")
+            print("failed. exit")
             sys.exit(1)
 
         # verify
@@ -91,7 +125,7 @@ class AutoAA:
             WebDriverWait(self.browser, 10).until(
                 EC.element_to_be_clickable(
                     (
-                        By.XPATH, '//*[contains(text(), "BIG Member ID")]'
+                        By.XPATH, '//*[contains(text(), "BIG會員帳號")]'
                     )
                 )
             )
@@ -101,7 +135,7 @@ class AutoAA:
                     aaConfig.loginPrompt1, aaConfig.loginPrompt2
                 )
             ).text
-            print("Welcome, {}!".format(tuserName))
+            print("AutoAA: Welcome, {}!".format(tuserName))
             self.browser.find_element_by_xpath(
                 '(//button[@aria-label="{}"])[2]'.format(
                     "Close navigation"
@@ -117,6 +151,8 @@ if __name__ == "__main__":
         showTemp = sys.argv[1]
     except :
         pass
+
     # start auto ticket crawler
     runner = AutoAA(showTemp)
+    runner.getDepartureList()
     runner.__login__()
