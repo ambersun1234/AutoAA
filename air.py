@@ -49,23 +49,85 @@ class AutoAA:
         try:
             # start
             self.browser.get(self.url)
-            print("done")
+            print("done\n")
         except:
-            print("error")
+            print("error. exit")
             sys.exit(1)
 
-    def getDepartureList(self):
+    def checkFlight(self):
+        print("AutoAA: Checking flight departure and arrival... ")
+        # get flight departure and arrival from config file
+        fd = self.pr.flightDeparture
+        fa = self.pr.flightArrival
+
+        # check departure flight location
+        departureClcikerId = self.getDepartureList(fd)
+        if departureClcikerId == -1:
+            print("AutoAA:     {} not found. exit".format(fd))
+            sys.exit(1)
+        else:
+            print("AutoAA:     {} ({}) found".format(
+                self.departureFullNameList.get(departureClcikerId, 0),
+                self.departureAbbrevNameList.get(departureClcikerId, 0)
+            ))
+            self.browser.find_element_by_id(
+                "{}{}".format(aaConfig.departureListField, departureClcikerId)
+            ).click()
+
+        # check arrival flight location
+        arrivalClickerId = self.getArrivalList(fa)
+        if arrivalClickerId == -1:
+            print("AutoAA:     {} not found. exit".format(fd))
+            sys.exit(1)
+        else:
+            print("AutoAA:     {} ({}) found".format(
+                self.arrivalFullNameList.get(arrivalClickerId, 0),
+                self.arrivalAbbrevNameList.get(arrivalClickerId, 0)
+            ))
+            self.browser.find_element_by_id(
+                "{}{}".format(aaConfig.arrivalListField, arrivalClickerId)
+            ).click()
+
+    def getArrivalList(self, configArrival):
+        print("AutoAA: Get departure list... ", end="")
+        # bring up arrival list
+        WebDriverWait(self.browser, 3).until(
+            EC.element_to_be_clickable(
+                (By.ID, aaConfig.arrivalBoxField)
+            )
+        )
+        # get all arrival name
+        items = self.browser.find_element_by_id(
+            aaConfig.arrivalBoxField
+        ).find_elements_by_tag_name("li")
+
+        # write to internal array list
+        counter = 0
+        for element in items:
+            tempF, tempA = element.text.split("\n")
+            self.arrivalFullNameList[counter]   = tempF
+            self.arrivalAbbrevNameList[counter] = tempA
+            # found config arrival location
+            # abort constructing arrival list
+            if configArrival == tempF or configArrival == tempA:
+                print("done")
+                return counter
+            counter += 1
+
+        return -1
+
+    def getDepartureList(self, configDeparture):
         print("AutoAA: Get departure list... ", end="")
         # bring up departure list
         WebDriverWait(self.browser, 3).until(
             EC.element_to_be_clickable(
-                (By.ID, "home-origin-autocomplete-heatmap")
+                (By.ID, aaConfig.departureButtonField)
             )
         ).click()
 
         # get all departure name
         items = self.browser.find_element_by_id(
-            "home-origin-autocomplete-heatmapstation-combobox"
+            aaConfig.departureBoxField
         ).find_elements_by_tag_name("li")
 
         # write to internal array list
@@ -74,13 +136,14 @@ class AutoAA:
             tempF, tempA = element.text.split("\n")
             self.departureFullNameList[counter]   = tempF
             self.departureAbbrevNameList[counter] = tempA
+            # found config departure location
+            # abort constructing departure list
+            if configDeparture == tempF or configDeparture == tempA:
+                print("done")
+                return counter
             counter += 1
 
-        if not self.departureFullNameList or not self.departureAbbrevNameList:
-            print("failed. exit")
-            sys.exit(1)
-        else:
-            print("done")
+        return -1
 
     def __login__(self):
         # bring up login page
@@ -154,5 +217,5 @@ if __name__ == "__main__":
 
     # start auto ticket crawler
     runner = AutoAA(showTemp)
-    runner.getDepartureList()
-    runner.__login__()
+    runner.checkFlight()
+    # runner.__login__()

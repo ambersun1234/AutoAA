@@ -7,3 +7,8 @@ class aaConfig:
     loginButtonFieldType     = "submit"
     loginPrompt1             = "userName"
     loginPrompt2             = "ng-star-inserted"
+    departureButtonField     = "home-origin-autocomplete-heatmap"
+    departureBoxField        = "home-origin-autocomplete-heatmapstation-combobox"
+    departureListField       = "home-origin-autocomplete-heatmaplist-"
+    arrivalBoxField          = "home-destination-autocomplete-heatmapstation-combobox"
+    arrivalListField         = "home-destination-autocomplete-heatmaplist-"
