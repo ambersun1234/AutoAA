@@ -54,7 +54,108 @@ class AutoAA:
             print("error. exit")
             sys.exit(1)
 
-    def checkFlight(self):
+    def selectTicketNum(self):
+        print("AutoAA: Selecting ticket number... ")
+        userTicket = {
+            0: int(self.pr.flightAdult),
+            1: int(self.pr.flightChildren),
+            2: int(self.pr.flightBaby)
+        }
+        print("AutoAA: {} adults, {} children, {} infants".format(
+            userTicket[0],
+            userTicket[1],
+            userTicket[2]
+        ))
+
+        # click button
+        WebDriverWait(self.browser, 3).until(
+            EC.element_to_be_clickable(
+                (By.ID, aaConfig.flightIdField)
+            )
+        ).click()
+
+        # wait pop up menu show
+        WebDriverWait(self.browser, 3).until(
+            EC.visibility_of_element_located(
+                (
+                    By.XPATH, '//div[@id="{}"]//div[contains(@class, "{} {}")]'.format(
+                        aaConfig.flightIdField,
+                        aaConfig.flightField1,
+                        aaConfig.flightField2
+                    )
+                )
+            )
+        )
+        # get current ticket status number
+        dropdown = self.browser.find_elements_by_xpath(
+            '//div[contains(@class, "{} {}")] \
+            //ul[@class="{}"] \
+            //li[contains(@class, "{} {}")] \
+            //div[contains(@class, "{} {}")] \
+            //div[@class="{}"] \
+            //span[@class="{}"]'.format(
+                aaConfig.flightField1,
+                aaConfig.flightField2,
+                aaConfig.flightField3,
+                aaConfig.flightField4,
+                aaConfig.flightField2,
+                aaConfig.flightField5,
+                aaConfig.flightField6,
+                aaConfig.flightField7,
+                aaConfig.flightField8
+            )
+        )
+
+        # press button
+        tempTicketClass = {
+            0: "adult",
+            1: "child",
+            2: "infant"
+        }
+        counter = 0
+        for element in dropdown:
+            offset = userTicket.get(counter, 0) - int(element.text)
+            for i in range(offset):
+                self.browser.find_element_by_id(
+                    "{}{}{}".format(
+                        aaConfig.flightButtonFieldHead,
+                        tempTicketClass.get(counter, 0),
+                        aaConfig.flightButtonFieldTail
+                    )
+                ).click()
+            counter += 1
+
+        # get current ticket status number
+        dropdown = self.browser.find_elements_by_xpath(
+            '//div[contains(@class, "{} {}")] \
+            //ul[@class="{}"] \
+            //li[contains(@class, "{} {}")] \
+            //div[contains(@class, "{} {}")] \
+            //div[@class="{}"] \
+            //span[@class="{}"]'.format(
+                aaConfig.flightField1,
+                aaConfig.flightField2,
+                aaConfig.flightField3,
+                aaConfig.flightField4,
+                aaConfig.flightField2,
+                aaConfig.flightField5,
+                aaConfig.flightField6,
+                aaConfig.flightField7,
+                aaConfig.flightField8
+            )
+        )
+
+        # verify operation
+        counter = 0
+        for element in dropdown:
+            offset = userTicket.get(counter, 0) - int(element.text)
+            counter += 1
+            if offset != 0:
+                print("AutoAA: Selecting ticket number error. exit")
+                sys.exit(1)
+        print("AutoAA: Selecting ticket number done")
+
+    def selectFlight(self):
         print("AutoAA: Checking flight departure and arrival... ")
         # get flight departure and arrival from config file
         fd = self.pr.flightDeparture
@@ -185,7 +286,7 @@ class AutoAA:
 
         # verify
         try:
-            WebDriverWait(self.browser, 10).until(
+            WebDriverWait(self.browser, 20).until(
                 EC.element_to_be_clickable(
                     (
                         By.XPATH, '//*[contains(text(), "BIG會員帳號")]'
@@ -217,5 +318,8 @@ if __name__ == "__main__":
 
     # start auto ticket crawler
     runner = AutoAA(showTemp)
-    runner.checkFlight()
-    # runner.__login__()
+    runner.__login__()
+    print()
+    runner.selectTicketNum()
+    print()
+    runner.selectFlight()

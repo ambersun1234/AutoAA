@@ -11,6 +11,9 @@ class aaConfigParser:
 
         self.flightDeparture = None
         self.flightArrival   = None
+        self.flightAdult     = None
+        self.flightChildren  = None
+        self.flightBaby      = None
 
     def __run__(self):
         currentDir = os.getcwd()
@@ -25,6 +28,9 @@ class aaConfigParser:
 
             self.flightDeparture = self.config["flight"]["departure"]
             self.flightArrival   = self.config["flight"]["arrival"]
+            self.flightAdult     = self.config["flight"]["adult"]
+            self.flightChildren  = self.config["flight"]["children"]
+            self.flightBaby      = self.config["flight"]["baby"]
         else:
             print("{} not found. exit".format(targetFile))
             sys.exit(1)
