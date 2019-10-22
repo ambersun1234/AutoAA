@@ -22,7 +22,6 @@ class AutoAA:
         self.arrivalFullNameList = dict()
         self.arrivalAbbrevNameList = dict()
 
-        print("AutoAA: Start selenium on {}... ".format(self.url), end="")
         self.pr.__run__() # read user's config
 
         try:
@@ -48,6 +47,7 @@ class AutoAA:
 
         try:
             # start
+            print("AutoAA: Start selenium on {}... ".format(self.url), end="")
             self.browser.get(self.url)
             print("done\n")
         except:
@@ -164,6 +164,7 @@ class AutoAA:
         # check departure flight location
         departureClcikerId = self.getDepartureList(fd)
         if departureClcikerId == -1:
+            print("failed")
             print("AutoAA:     {} not found. exit".format(fd))
             sys.exit(1)
         else:
@@ -178,6 +179,7 @@ class AutoAA:
         # check arrival flight location
         arrivalClickerId = self.getArrivalList(fa)
         if arrivalClickerId == -1:
+            print("failed")
             print("AutoAA:     {} not found. exit".format(fd))
             sys.exit(1)
         else:
