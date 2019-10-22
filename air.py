@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 
 from bs4 import BeautifulSoup as bs
 
+# self defined functions
 from config.aaConfig import aaConfig
 from parser.aaConfigParser import aaConfigParser
 
@@ -29,6 +30,7 @@ class AutoAA:
             options = webdriver.ChromeOptions()
             options.add_argument("--headless")
 
+            # command line argument
             if show == "show":
                 self.browser = webdriver.Chrome(
                     executable_path='/usr/local/bin/chromedriver'
@@ -67,7 +69,7 @@ class AutoAA:
             userTicket[2]
         ))
 
-        # click button
+        # click ticket number button to bring up manual
         WebDriverWait(self.browser, 3).until(
             EC.element_to_be_clickable(
                 (By.ID, aaConfig.flightIdField)
@@ -112,10 +114,13 @@ class AutoAA:
             1: "child",
             2: "infant"
         }
+        # iterate 3 kinds of ticket number(website)
         counter = 0
         for element in dropdown:
+            # get offset of config.ini with website's
             offset = userTicket.get(counter, 0) - int(element.text)
             for i in range(offset):
+                # click add ticket button
                 self.browser.find_element_by_id(
                     "{}{}{}".format(
                         aaConfig.flightButtonFieldHead,
@@ -145,7 +150,7 @@ class AutoAA:
             )
         )
 
-        # verify operation
+        # verify operation, recheck
         counter = 0
         for element in dropdown:
             offset = userTicket.get(counter, 0) - int(element.text)
@@ -172,6 +177,7 @@ class AutoAA:
                 self.departureFullNameList.get(departureClcikerId, 0),
                 self.departureAbbrevNameList.get(departureClcikerId, 0)
             ))
+            # click departure location on list
             self.browser.find_element_by_id(
                 "{}{}".format(aaConfig.departureListField, departureClcikerId)
             ).click()
@@ -187,6 +193,7 @@ class AutoAA:
                 self.arrivalFullNameList.get(arrivalClickerId, 0),
                 self.arrivalAbbrevNameList.get(arrivalClickerId, 0)
             ))
+            # click arrival location on list
             self.browser.find_element_by_id(
                 "{}{}".format(aaConfig.arrivalListField, arrivalClickerId)
             ).click()
@@ -262,11 +269,12 @@ class AutoAA:
         ).click()
 
         try:
-            # fill user's information to login
+            # fill user's email to login
             WebDriverWait(self.browser, 3).until(
                 EC.element_to_be_clickable((By.ID, aaConfig.loginEmailFieldId))
             ).send_keys(self.pr.loginEmail)
 
+            # fill user's password to login
             WebDriverWait(self.browser, 3).until(
                 EC.element_to_be_clickable((By.ID, aaConfig.loginPasswordFieldId))
             ).send_keys(self.pr.loginPassword)
@@ -288,6 +296,7 @@ class AutoAA:
 
         # verify
         try:
+            # get air asia user id on website
             WebDriverWait(self.browser, 20).until(
                 EC.element_to_be_clickable(
                     (
@@ -296,12 +305,14 @@ class AutoAA:
                 )
             )
             print("done")
+            # get air asia true user name
             tuserName = self.browser.find_element_by_xpath(
                 '//div[@class="{}"]//span[@class="{}"]'.format(
                     aaConfig.loginPrompt1, aaConfig.loginPrompt2
                 )
             ).text
             print("AutoAA: Welcome, {}!".format(tuserName))
+            # close login panel
             self.browser.find_element_by_xpath(
                 '(//button[@aria-label="{}"])[2]'.format(
                     "Close navigation"

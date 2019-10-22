@@ -1,4 +1,5 @@
 class aaConfig:
+    # Air asia class and id name
     loginModalFieldClass1    = "sidenav-toggle"
     loginModalFieldClass2    = "iconcolorsignup"
     loginEmailFieldId        = "sso-login-email-input"

@@ -4,6 +4,7 @@ import os
 
 class aaConfigParser:
     def __init__(self):
+        # new config parser to read ROOT/config/config.ini
         self.config = configparser.ConfigParser()
 
         self.loginEmail      = None
@@ -19,6 +20,7 @@ class aaConfigParser:
         currentDir = os.getcwd()
         targetFile = "{}/config/config.ini".format(currentDir)
 
+        # if file exists
         if os.path.isfile(targetFile):
             self.config.read(targetFile)
 
