@@ -69,6 +69,10 @@ class AutoAA:
             userTicket[2]
         ))
 
+        if userTicket[2] > userTicket[0]:
+            print("AutoAA: error! 1 infant need at least 1 adult")
+            sys.exit(1)
+
         # click ticket number button to bring up manual
         WebDriverWait(self.browser, 3).until(
             EC.element_to_be_clickable(
