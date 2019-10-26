@@ -24,3 +24,6 @@ class aaConfig:
     flightField8             = "numeric-value"
     flightButtonFieldHead    = "home-airasia-numeric-selector-a-home-enabled-increase-main."
     flightButtonFieldTail    = "-heatmap"
+    flightTripType           = "triptype"
+    flightTripOne            = "trip-oneway"
+    flightTripReturn         = "trip-return"

@@ -326,6 +326,25 @@ class AutoAA:
             print("failed. exit")
             sys.exit(1)
 
+    def setTicketType(self):
+        oneWay = int(self.pr.flightOne)
+        returnWay = int(self.pr.flightReturn)
+
+        print("AutoAA: ", end="")
+        if oneWay == 1 and returnWay == 1:
+            print("set ticket type error. exit")
+            sys.exit(1)
+        else:
+            if oneWay:
+                self.browser.find_element_by_xpath(
+                    '//label[@for="{}"]'.format(aaConfig.flightTripOne)
+                ).click()
+            else:
+                self.browser.find_element_by_xpath(
+                    '//label[@for="{}"]'.format(aaConfig.flightTripReturn)
+                ).click()
+            print("{} done".format("one way ticket" if oneWay else "returnWay"))
+
 if __name__ == "__main__":
     showTemp = None
     try:
@@ -340,3 +359,5 @@ if __name__ == "__main__":
     runner.selectTicketNum()
     print()
     runner.selectFlight()
+    print()
+    runner.setTicketType()

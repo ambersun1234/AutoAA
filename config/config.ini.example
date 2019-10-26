@@ -8,3 +8,5 @@ arrival   = ARRIVAL
 adult     = 1
 children  = 0
 baby      = 0
+oneway    = 0
+return    = 1
