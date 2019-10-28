@@ -3,10 +3,12 @@ email     = YOUR@EMAIL.com
 password  = YOURPASSWORD
 
 [flight]
-departure = DEPARTURE
-arrival   = ARRIVAL
-adult     = 1
-children  = 0
-baby      = 0
-oneway    = 0
-return    = 1
+departure     = DEPARTURE
+arrival       = ARRIVAL
+adult         = 1
+children      = 0
+baby          = 0
+oneway        = 0
+return        = 1
+departureDate = 2020/1/01
+returnDate    = 2020/03/19

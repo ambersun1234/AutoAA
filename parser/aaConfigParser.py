@@ -37,6 +37,19 @@ class aaConfigParser:
             self.flightBaby      = self.config["flight"]["baby"]
             self.flightOne       = self.config["flight"]["oneway"]
             self.flightReturn    = self.config["flight"]["return"]
+            self.flightDDate     = self.config["flight"]["departureDate"]
+            self.flightRDate     = self.config["flight"]["returnDate"]
+
+            if None in (
+                self.loginEmail, self.loginPassword,
+                self.flightDeparture, self.flightArrival, self.flightAdult, self.flightChildren,
+                self.flightBaby, self.flightOne, self.flightReturn, self.flightDDate,
+                self.flightRDate
+            ):
+                print("AutoAA: None type variable found in ./config/config.ini. exit")
+                sys.exit(1)
+            else:
+                print("AutoAA: ./config/config.ini read done")
         else:
-            print("{} not found. exit".format(targetFile))
+            print("AutoAA: {} not found. exit".format(targetFile))
             sys.exit(1)

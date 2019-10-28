@@ -1,4 +1,6 @@
 import sys
+import datetime
+import time
 
 import selenium
 from selenium import webdriver
@@ -11,6 +13,14 @@ from bs4 import BeautifulSoup as bs
 # self defined functions
 from config.aaConfig import aaConfig
 from parser.aaConfigParser import aaConfigParser
+
+def validate(date_text):
+    try:
+        datetime.datetime.strptime(date_text, "%Y/%m/%d")
+    except ValueError:
+        return False
+    else:
+        return True
 
 class AutoAA:
     def __init__(self, show):
@@ -345,6 +355,48 @@ class AutoAA:
                 ).click()
             print("{} done".format("one way ticket" if oneWay else "returnWay"))
 
+    def setTicketDate(self):
+        oneWay     = int(self.pr.flightOne)
+        returnWay  = int(self.pr.flightReturn)
+        oneDate    = self.pr.flightDDate
+        returnDate = self.pr.flightRDate
+
+        print("AutoAA: Setting ticket date...\nAutoAA: ", end="")
+        rt = validate(oneDate) or validate(returnDate)
+        if not rt:
+            print("Date format incorrect. exit")
+            sys.exit(1)
+
+        if oneWay == 1 and returnWay == 1:
+            print("set ticket type error. exit")
+            sys.exit(1)
+        else:
+            # 無論如何都必須選擇起始時間
+            self.browser.find_element_by_id(
+                aaConfig.flightDDateField
+            ).click()
+            self.browser.find_element_by_id(
+                aaConfig.flightDDateField
+            ).clear()
+            self.browser.find_element_by_id(
+                aaConfig.flightDDateField
+            ).send_keys(oneDate)
+            if returnWay:
+                tmp = self.browser.find_element_by_id(
+                    aaConfig.flightRDateField
+                )
+                selenium.webdriver.ActionChains(self.browser).move_to_element(tmp).click(tmp).perform()
+                self.browser.find_element_by_id(
+                    aaConfig.flightRDateField
+                ).clear()
+                self.browser.find_element_by_id(
+                    aaConfig.flightRDateField
+                ).send_keys(returnDate)
+            print("departure date: {}, return date: {}".format(oneDate, returnDate))
+            self.browser.find_element_by_id(
+                aaConfig.flightSearchField
+            ).click()
+
 if __name__ == "__main__":
     showTemp = None
     try:
@@ -361,3 +413,5 @@ if __name__ == "__main__":
     runner.selectFlight()
     print()
     runner.setTicketType()
+    print()
+    runner.setTicketDate()

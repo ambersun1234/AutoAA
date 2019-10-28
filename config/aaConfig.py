@@ -27,3 +27,6 @@ class aaConfig:
     flightTripType           = "triptype"
     flightTripOne            = "trip-oneway"
     flightTripReturn         = "trip-return"
+    flightDDateField         = "home-depart-date-heatmap"
+    flightRDateField         = "home-return-date-heatmap"
+    flightSearchField        = "home-flight-search-airasia-button-inner-button-select-flight-heatmap"
