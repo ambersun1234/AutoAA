@@ -24,6 +24,12 @@ def validate(date_text):
     else:
         return True
 
+def padding(date_text):
+    return "{:%m/%d}".format(datetime.datetime.strptime(date_text, "%m/%d"))
+
+def shorten(date_text):
+    return "{:%m/%d}".format(datetime.datetime.strptime(date_text, "%Y/%m/%d"))
+
 class AutoAA:
     def __init__(self, show):
         self.browser = None
@@ -394,7 +400,7 @@ class AutoAA:
                 self.browser.find_element_by_id(
                     aaConfig.flightRDateField
                 ).send_keys(returnDate)
-                print("return date: {}".format(returnDate))
+                print("AutoAA: return date: {}".format(returnDate))
             self.browser.find_element_by_xpath(
                 '//button[@class="{}"]'.format(
                     "calendar-button"
@@ -403,6 +409,67 @@ class AutoAA:
             self.browser.find_element_by_id(
                 aaConfig.flightSearchField
             ).click()
+
+    def queryFlight(self):
+        oneDate = self.pr.flightDDate
+        returnDate = self.pr.flightRDate
+
+        # 等待頁面載入完成
+        WebDriverWait(self.browser, 20).until(
+            EC.visibility_of_element_located(
+                (
+                    By.ID, aaConfig.flightDepartureRightBtn
+                )
+            )
+        )
+
+        # 尋找當日班機
+        checker = True
+        oneDate = shorten(oneDate)
+        # 實做 python do-while
+        while checker:
+            # 挑選選擇班次日期相關訊息
+            lala = self.browser.find_elements_by_css_selector(
+                'div[id*="{}"]'.format(
+                    "{}{}".format(
+                        aaConfig.flightDepartureDate,
+                        aaConfig.flightDepartureIndex
+                    )
+                )
+            )
+            # 依次遞迴搜索 5 筆結果進行比對
+            for element in lala:
+                try:
+                    tempDate = element.text.split(",")[0].replace("月", "/").replace("日", "")
+                except selenium.common.exceptions.StaleElementReferenceException as e:
+                    tempDate = element.text.split(",")[0].replace("月", "/").replace("日", "")
+                if oneDate == padding(tempDate):
+                    checker = False
+                    # 取得當前 id
+                    id = element.get_attribute("id").replace("{}{}".format(
+                        aaConfig.flightDepartureDate,
+                        aaConfig.flightDepartureIndex
+                    ), "")
+                    # 點擊方框，取得票價以及剩餘票數
+                    self.browser.find_element_by_id(
+                        "{}{}{}{}".format(
+                            aaConfig.flightDepartureClickH,
+                            aaConfig.flightDepartureIndex,
+                            id,
+                            aaConfig.flightDepartureClickT
+                        )
+                    ).click()
+                    break
+            if checker:
+                # 按下一頁
+                self.browser.find_element_by_xpath(
+                    '//div[@id="{}"]//div[@class="{}"]'.format(
+                        aaConfig.flightDepartureRightBtn,
+                        aaConfig.flightScrollBarDefault
+                    )
+                ).click()
+        print("AutoAA: departure date selected")
+
 
 if __name__ == "__main__":
     showTemp = None
@@ -422,3 +489,5 @@ if __name__ == "__main__":
     runner.setTicketType()
     print()
     runner.setTicketDate()
+    print()
+    runner.queryFlight()
