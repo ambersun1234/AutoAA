@@ -15,6 +15,8 @@ from config.aaConfig import aaConfig
 from parser.aaConfigParser import aaConfigParser
 
 def validate(date_text):
+    if len(date_text) != 10:
+        return False
     try:
         datetime.datetime.strptime(date_text, "%Y/%m/%d")
     except ValueError:
@@ -362,8 +364,7 @@ class AutoAA:
         returnDate = self.pr.flightRDate
 
         print("AutoAA: Setting ticket date...\nAutoAA: ", end="")
-        rt = validate(oneDate) or validate(returnDate)
-        if not rt:
+        if not validate(oneDate) or not validate(returnDate):
             print("Date format incorrect. exit")
             sys.exit(1)
 
@@ -381,6 +382,7 @@ class AutoAA:
             self.browser.find_element_by_id(
                 aaConfig.flightDDateField
             ).send_keys(oneDate)
+            print("departure date: {}".format(oneDate))
             if returnWay:
                 tmp = self.browser.find_element_by_id(
                     aaConfig.flightRDateField
@@ -392,7 +394,12 @@ class AutoAA:
                 self.browser.find_element_by_id(
                     aaConfig.flightRDateField
                 ).send_keys(returnDate)
-            print("departure date: {}, return date: {}".format(oneDate, returnDate))
+                print("return date: {}".format(returnDate))
+            self.browser.find_element_by_xpath(
+                '//button[@class="{}"]'.format(
+                    "calendar-button"
+                )
+            ).click()
             self.browser.find_element_by_id(
                 aaConfig.flightSearchField
             ).click()
