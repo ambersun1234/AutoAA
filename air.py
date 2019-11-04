@@ -422,6 +422,16 @@ class AutoAA:
                 )
             )
         )
+        WebDriverWait(self.browser, 20).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH, '//*[contains(@class, "{} {}")]'.format(
+                        "fare-date-item-inner",
+                        "active"
+                    )
+                )
+            )
+        )
 
         # 尋找當日班機
         checker = True
@@ -468,6 +478,24 @@ class AutoAA:
                         aaConfig.flightScrollBarDefault
                     )
                 ).click()
+                # 等待頁面載入完成
+                WebDriverWait(self.browser, 20).until(
+                    EC.visibility_of_element_located(
+                        (
+                            By.ID, aaConfig.flightDepartureRightBtn
+                        )
+                    )
+                )
+                WebDriverWait(self.browser, 20).until(
+                    EC.presence_of_element_located(
+                        (
+                            By.XPATH, '//*[contains(@class, "{} {}")]'.format(
+                                "fare-date-item-inner",
+                                "active"
+                            )
+                        )
+                    )
+                )
         print("AutoAA: departure date selected")
 
     def selectDepaturePrice(self):

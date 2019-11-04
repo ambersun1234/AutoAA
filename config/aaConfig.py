@@ -49,3 +49,4 @@ class aaConfig:
     flightJourneyUpField     = "journey-line-0-0"
     flightJourneyOtherField  = "journey-line-0"
     flightChoosePriceField   = "airasia-fares-div"
+    flightStatusField        = "fare-date-item-inner"
