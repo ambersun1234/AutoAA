@@ -2,8 +2,12 @@
 Automatic ticket crawler for air asia
 
 ## Disclaimer
-+ This article is for educational usage, user's implementation belongs to one's personal behavior
++ This article is for **educational usage**, user's implementation belongs to one's personal behavior
 + The author doesn't bear any legal reponsibility
++ This original python code is completely following [General Data Protection Regulation - GDPR](https://gdpr-info.eu/) rules, if any user change any part of the code, then there's no guarantee that the modified code will still follow [General Data Protection Regulation - GDPR](https://gdpr-info.eu/) rules
+
+## Privacy Policy
++ We have a simple [Privacy Policy](./policy.md) where we state how we handle your information
 
 ## Clone Repo
 ```=1
