@@ -20,7 +20,7 @@ class aaConfigParser:
 
     def __run__(self):
         currentDir = os.getcwd()
-        targetFile = "{}/config/config.ini".format(currentDir)
+        targetFile = "{}/airasia/config/config.ini".format(currentDir)
 
         # if file exists
         if os.path.isfile(targetFile):
