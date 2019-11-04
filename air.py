@@ -400,7 +400,7 @@ class AutoAA:
                 self.browser.find_element_by_id(
                     aaConfig.flightRDateField
                 ).send_keys(returnDate)
-                print("AutoAA: return date: {}".format(returnDate))
+                print("AutoAA: return date:    {}".format(returnDate))
             self.browser.find_element_by_xpath(
                 '//button[@class="{}"]'.format(
                     "calendar-button"
@@ -470,6 +470,145 @@ class AutoAA:
                 ).click()
         print("AutoAA: departure date selected")
 
+    def selectDepaturePrice(self):
+        print("AutoAA: Querying departure flight price...")
+
+        counter = 1
+
+        try:
+            # find all price button
+            tflightBtn = self.browser.find_elements_by_xpath(
+                '//*[contains(@id, "{}")]'.format(
+                    aaConfig.flightChoosePriceField
+                )
+            )
+
+            # find departure time of flight
+            tjourney = self.browser.find_element_by_id(
+                aaConfig.flightJourneyUpField
+            )
+        except selenium.common.exceptions.NoSuchElementException:
+            print("AutoAA: No flights in the desired time. exit")
+            sys.exit(1)
+        else:
+            print("AutoAA: {}".format(tjourney.text))
+
+        # find normal seat price
+        tamount = self.browser.find_element_by_xpath(
+            '//*[contains(@id, "{}{}{}0-")]'.format(
+                aaConfig.flightNormalSeatFieldH,
+                aaConfig.flightAmountField,
+                aaConfig.flightSeatFieldT
+            )
+        )
+        currency = self.browser.find_element_by_xpath(
+            '//*[contains(@id, "{}{}{}0-")]'.format(
+                aaConfig.flightNormalSeatFieldH,
+                aaConfig.flightCurrencyField,
+                aaConfig.flightSeatFieldT
+            )
+        )
+        tbage = self.browser.find_element_by_xpath(
+            '//*[contains(@id, "{}{}{}0-")]'.format(
+                aaConfig.flightNormalSeatFieldH,
+                aaConfig.flightBageField,
+                aaConfig.flightSeatFieldT
+            )
+        )
+        print("AutoAA:     {}. normal seat price:      {} {} {}".format(
+            counter, tamount.text, currency.text, tbage.text
+        ))
+        counter += 1
+
+        # find luxury seat price
+        try:
+            tamount = self.browser.find_element_by_id(
+                "{}{}{}0-0".format(
+                    aaConfig.flightPrioritySeatFieldH,
+                    aaConfig.flightAmountField,
+                    aaConfig.flightSeatFieldT
+                )
+            )
+            tbage = self.browser.find_element_by_id(
+                "{}{}{}0-0".format(
+                    aaConfig.flightPrioritySeatFieldH,
+                    aaConfig.flightBageField,
+                    aaConfig.flightSeatFieldT
+                )
+            )
+        except selenium.common.exceptions.NoSuchElementException:
+            print("AutoAA:     0. luxury flat seat price: not available")
+        else:
+            print("AutoAA:     {}. luxury flat seat price: {} {} {}".format(
+                counter, tamount.text, currency.text, tbage.text
+            ))
+            counter += 1
+
+        # find parity seat price
+        parityJourney = self.browser.find_elements_by_xpath(
+            '//*[contains(@id, "{}")]'.format(
+                aaConfig.flightJourneyOtherField
+            )
+        )[1:]
+        parityAmount = self.browser.find_elements_by_xpath(
+            '//*[contains(@id, "{}{}{}0-")]'.format(
+                aaConfig.flightSeatFieldH,
+                aaConfig.flightAmountField,
+                aaConfig.flightSeatFieldT
+            )
+        )
+        parityBadge = self.browser.find_elements_by_xpath(
+            '//*[contains(@id, "{}{}{}0-")]'.format(
+                aaConfig.flightSeatFieldH,
+                aaConfig.flightBageField,
+                aaConfig.flightSeatFieldT
+            )
+        )[1:]
+
+        parityFlat = self.browser.find_elements_by_xpath(
+            '//*[contains(@id, "{}{}{}0-")]'.format(
+                aaConfig.flightPrioritySeatFieldH,
+                aaConfig.flightAmountField,
+                aaConfig.flightSeatFieldT
+            )
+        )[1:]
+        parityBadge2 = self.browser.find_elements_by_xpath(
+            '//*[contains(@id, "{}{}{}0-")]'.format(
+                aaConfig.flightPrioritySeatFieldH,
+                aaConfig.flightBageField,
+                aaConfig.flightSeatFieldT
+            )
+        )[1:]
+
+        # inconsistent list size
+        if len(parityBadge) != len(parityJourney):
+            parityBadge = [None] * len(parityJourney)
+        if len(parityFlat) != len(parityJourney):
+            parityFlat = [None] * len(parityJourney)
+            parityBadge2 = [None] * len(parityJourney)
+
+        # show each seat's price
+        for pj, pa, pf, pb, pb2 in zip(parityJourney, parityAmount, parityFlat, parityBadge, parityBadge2):
+            print("AutoAA: {}".format(pj.text))
+            print("AutoAA:     {}. normal seat price:      {} {} {}".format(
+                counter, pa.text, currency.text, "" if pb is None else pb.text
+            ))
+            counter += 1
+            if pf is None:
+                print("AutoAA:     0. luxury flat seat:       not available")
+            else:
+                print("AutoAA:     {}. luxury flat seat price: {} {} {}\n".format(
+                    counter, pf.text, currency.text, "" if pb2 is None else pb2.text
+                ))
+                counter += 1
+        print("AutoAA: please enter the desired flight price: ")
+        while True:
+            chosen = int(input())
+            if chosen >= counter or chosen <= 0:
+                print("AutoAA:     Error index, try again")
+            else:
+                break
+        tflightBtn[chosen - 1].click()
 
 if __name__ == "__main__":
     showTemp = None
@@ -491,3 +630,5 @@ if __name__ == "__main__":
     runner.setTicketDate()
     print()
     runner.queryFlight()
+    print()
+    runner.selectDepaturePrice()
