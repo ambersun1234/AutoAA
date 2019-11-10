@@ -52,3 +52,4 @@ class aaConfig:
     flightStatusField        = "fare-date-item-inner"
     flightTotalField         = "amount-text"
     flightCheckIconField     = "icon-bundle-check"
+    specialOfferBtnField      = "addons-bottom-booking-summary-airasia-button-inner-button-booking-summary-heatmap"

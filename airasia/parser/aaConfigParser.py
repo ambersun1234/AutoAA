@@ -18,6 +18,8 @@ class aaConfigParser:
         self.flightOne       = None
         self.flightReturn    = None
 
+        self.vip             = None
+
     def __run__(self):
         currentDir = os.getcwd()
         targetFile = "{}/airasia/config/config.ini".format(currentDir)
@@ -40,11 +42,13 @@ class aaConfigParser:
             self.flightDDate     = self.config["flight"]["departureDate"]
             self.flightRDate     = self.config["flight"]["returnDate"]
 
+            self.vip             = self.config["service"]["vip"]
+
             if None in (
                 self.loginEmail, self.loginPassword,
                 self.flightDeparture, self.flightArrival, self.flightAdult, self.flightChildren,
                 self.flightBaby, self.flightOne, self.flightReturn, self.flightDDate,
-                self.flightRDate
+                self.flightRDate, self.vip
             ):
                 print("AutoAA: None type variable found in ./config/config.ini. exit")
                 sys.exit(1)

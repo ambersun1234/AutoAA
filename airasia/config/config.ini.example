@@ -12,3 +12,6 @@ oneway        = 0
 return        = 1
 departureDate = 2020/1/01
 returnDate    = 2020/03/19
+
+[service]
+vip           = 0

@@ -788,6 +788,16 @@ class AutoAA:
         trash = input()
         self.submit()
 
+    def getSpecialOffer(self):
+        print("AutoAA: Processing special offer...")
+        WebDriverWait(self.browser, 20).until(
+            EC.visibility_of_element_located(
+                (
+                    By.ID, aaConfig.specialOfferBtnField
+                )
+            )
+        )
+
     def validate(self, date_text):
         if len(date_text) != 10:
             return False

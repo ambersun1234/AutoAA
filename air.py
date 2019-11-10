@@ -27,3 +27,5 @@ if __name__ == "__main__":
     runner.selectDepaturePrice()
     print()
     runner.selectReturnPrice()
+    print()
+    runner.getSpecialOffer()
