@@ -261,7 +261,7 @@ class AutoAA:
 
     def __login__(self):
         # bring up login page
-        WebDriverWait(self.browser, 3).until(
+        WebDriverWait(self.browser, 10).until(
             EC.element_to_be_clickable(
                 (
                     By.XPATH, '//button[contains(@class, "{} {}")]'.format(
@@ -499,6 +499,17 @@ class AutoAA:
                 )
             )
         )
+        WebDriverWait(self.browser, 20).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH, '//*[contains(@id, "{}{}{}0-")]'.format(
+                        aaConfig.flightNormalSeatFieldH,
+                        aaConfig.flightAmountField,
+                        aaConfig.flightSeatFieldT
+                    )
+                )
+            )
+        )
 
         tps = self.pricecounter - 1
         print("AutoAA: Querying departure flight price...")
@@ -510,25 +521,11 @@ class AutoAA:
                     aaConfig.flightChoosePriceField
                 )
             )
-
-            # find departure time of flight
-            tjourney = self.browser.find_element_by_id(
-                aaConfig.flightJourneyUpField1
-            )
         except selenium.common.exceptions.NoSuchElementException:
             print("AutoAA: No flights in the desired time. exit")
             sys.exit(1)
-        else:
-            print("AutoAA: {}".format(tjourney.text))
 
-        # # find normal seat price
-        tamount = self.browser.find_element_by_xpath(
-            '//*[contains(@id, "{}{}{}0-")]'.format(
-                aaConfig.flightNormalSeatFieldH,
-                aaConfig.flightAmountField,
-                aaConfig.flightSeatFieldT
-            )
-        )
+        # 取得貨幣
         self.ct = self.browser.find_element_by_xpath(
             '//*[contains(@id, "{}{}{}0-")]'.format(
                 aaConfig.flightNormalSeatFieldH,
@@ -536,93 +533,71 @@ class AutoAA:
                 aaConfig.flightSeatFieldT
             )
         ).text
-        tbage = self.browser.find_element_by_xpath(
-            '//*[contains(@id, "{}{}{}0-")]'.format(
-                aaConfig.flightNormalSeatFieldH,
-                aaConfig.flightBageField,
-                aaConfig.flightSeatFieldT
-            )
-        )
-        print("AutoAA:     {}. normal seat price:      {} {} {}".format(
-            self.pricecounter - tps, tamount.text, self.ct, tbage.text
-        ))
-        self.pricecounter += 1
 
-        # find luxury seat price
-        try:
-            tamount = self.browser.find_element_by_id(
-                "{}{}{}0-0".format(
-                    aaConfig.flightPrioritySeatFieldH,
-                    aaConfig.flightAmountField,
-                    aaConfig.flightSeatFieldT
-                )
-            )
-            tbage = self.browser.find_element_by_id(
-                "{}{}{}0-0".format(
-                    aaConfig.flightPrioritySeatFieldH,
-                    aaConfig.flightBageField,
-                    aaConfig.flightSeatFieldT
-                )
-            )
-        except selenium.common.exceptions.NoSuchElementException:
-            print("AutoAA:     0. luxury flat seat price: not available")
-        else:
-            print("AutoAA:     {}. luxury flat seat price: {} {} {}".format(
-                self.pricecounter - tps, tamount.text, self.ct, tbage.text
-            ))
-            self.pricecounter += 1
-
+        numUp = 0
         # find parity seat price
         parityJourney = self.browser.find_elements_by_xpath(
             '//*[contains(@id, "{}")]'.format(
-                aaConfig.flightJourneyOtherField1
+                aaConfig.flightJourneyField1
             )
-        )[1:]
+        )
         parityAmount = self.browser.find_elements_by_xpath(
-            '//*[contains(@id, "{}{}{}0-")]'.format(
+            '//*[starts-with(@id, "{}") and contains(@id, "{}{}{}-")]'.format(
                 aaConfig.flightSeatFieldH,
                 aaConfig.flightAmountField,
-                aaConfig.flightSeatFieldT
+                aaConfig.flightSeatFieldT,
+                numUp
             )
         )
         parityBadge = self.browser.find_elements_by_xpath(
-            '//*[contains(@id, "{}{}{}0-")]'.format(
+            '//*[starts-with(@id, "{}") and contains(@id, "{}{}{}-")]'.format(
                 aaConfig.flightSeatFieldH,
                 aaConfig.flightBageField,
-                aaConfig.flightSeatFieldT
+                aaConfig.flightSeatFieldT,
+                numUp
             )
-        )[1:]
-
+        )
         parityFlat = self.browser.find_elements_by_xpath(
-            '//*[contains(@id, "{}{}{}0-")]'.format(
+            '//*[starts-with(@id, "{}") and contains(@id, "{}{}{}-")]'.format(
                 aaConfig.flightPrioritySeatFieldH,
                 aaConfig.flightAmountField,
-                aaConfig.flightSeatFieldT
+                aaConfig.flightSeatFieldT,
+                numUp
             )
-        )[1:]
+        )
         parityBadge2 = self.browser.find_elements_by_xpath(
-            '//*[contains(@id, "{}{}{}0-")]'.format(
+            '//*[starts-with(@id, "{}") and contains(@id, "{}{}{}-")]'.format(
                 aaConfig.flightPrioritySeatFieldH,
                 aaConfig.flightBageField,
-                aaConfig.flightSeatFieldT
+                aaConfig.flightSeatFieldT,
+                numUp
             )
-        )[1:]
+        )
 
-        # inconsistent list size
+        # 固定長度
+        # 固定長度
+        if len(parityJourney) != len(parityJourney):
+            parityJourney = [None] * len(parityJourney)
+        if len(parityAmount) != len(parityJourney):
+            parityAmount = [None] * len(parityJourney)
         if len(parityBadge) != len(parityJourney):
             parityBadge = [None] * len(parityJourney)
         if len(parityFlat) != len(parityJourney):
             parityFlat = [None] * len(parityJourney)
+        if len(parityBadge2) != len(parityJourney):
             parityBadge2 = [None] * len(parityJourney)
 
         # show each seat's price
         for pj, pa, pf, pb, pb2 in zip(parityJourney, parityAmount, parityFlat, parityBadge, parityBadge2):
             print("AutoAA: {}".format(pj.text))
-            print("AutoAA:     {}. normal seat price:      {} {} {}".format(
-                self.pricecounter - tps, pa.text, self.ct, "" if pb is None else pb.text
-            ))
-            self.pricecounter += 1
-            if pf is None:
+            if pa is None or pb is None:
+                print("AutoAA:     {}. normal seat price:      not available")
+            else:
+                print("AutoAA:     {}. normal seat price:      {} {} {}".format(
+                    self.pricecounter - tps, pa.text, self.ct, "" if pb is None else pb.text
+                ))
+                self.pricecounter += 1
+            if pf is None or pb2 is None:
                 print("AutoAA:     0. luxury flat seat:       not available")
             else:
                 print("AutoAA:     {}. luxury flat seat price: {} {} {}\n".format(
@@ -638,14 +613,13 @@ class AutoAA:
                 break
         try:
             # 點選選擇票價
-            tempId = tflightBtn[chosen - 1].get_attribute("id")
             tmp = self.browser.find_element_by_id(
-                tempId
+                tflightBtn[chosen - 1].get_attribute("id")
             )
 
             tmp2 = tmp.find_element_by_xpath(
-                './span[contains(@class, "{}")]'.format(
-                    aaConfig.flightCheckIconField,
+                './/*[contains(@class, "{}")]'.format(
+                    aaConfig.flightCheckIconField
                 )
             )
         except selenium.common.exceptions.NoSuchElementException:
@@ -701,112 +675,80 @@ class AutoAA:
                     aaConfig.flightChoosePriceField
                 )
             )
-
-            # find departure time of flight
-            tjourney = self.browser.find_element_by_id(
-                aaConfig.flightJourneyUpField2
-            )
         except selenium.common.exceptions.NoSuchElementException:
             print("AutoAA: No flights in the desired time. exit")
             sys.exit(1)
-        else:
-            print("AutoAA: {}".format(tjourney.text))
 
-        # find normal seat price
-        tamount = self.browser.find_element_by_xpath(
-            '//*[contains(@id, "{}{}{}1-")]'.format(
-                aaConfig.flightNormalSeatFieldH,
-                aaConfig.flightAmountField,
-                aaConfig.flightSeatFieldT
-            )
-        )
-        tbage = self.browser.find_element_by_xpath(
-            '//*[contains(@id, "{}{}{}1-")]'.format(
-                aaConfig.flightNormalSeatFieldH,
-                aaConfig.flightBageField,
-                aaConfig.flightSeatFieldT
-            )
-        )
-        print("AutoAA:     {}. normal seat price:      {} {} {}".format(
-            self.pricecounter - tps, tamount.text, self.ct, tbage.text
-        ))
-        self.pricecounter += 1
-
-        # find luxury seat price
-        try:
-            tamount = self.browser.find_element_by_id(
-                "{}{}{}1-0".format(
-                    aaConfig.flightPrioritySeatFieldH,
-                    aaConfig.flightAmountField,
-                    aaConfig.flightSeatFieldT
-                )
-            )
-            tbage = self.browser.find_element_by_id(
-                "{}{}{}1-0".format(
-                    aaConfig.flightPrioritySeatFieldH,
-                    aaConfig.flightBageField,
-                    aaConfig.flightSeatFieldT
-                )
-            )
-        except selenium.common.exceptions.NoSuchElementException:
-            print("AutoAA:     0. luxury flat seat price: not available")
-        else:
-            print("AutoAA:     {}. luxury flat seat price: {} {} {}".format(
-                self.pricecounter - tps, tamount.text, self.ct, tbage.text
-            ))
-            self.pricecounter += 1
-
+        numDown = 1
         # find parity seat price
         parityJourney = self.browser.find_elements_by_xpath(
             '//*[contains(@id, "{}")]'.format(
-                aaConfig.flightJourneyOtherField2
+                aaConfig.flightJourneyField2
             )
-        )[1:]
+        )
         parityAmount = self.browser.find_elements_by_xpath(
-            '//*[contains(@id, "{}{}{}1-")]'.format(
+            '//*[starts-with(@id, "{}") and contains(@id, "{}{}{}-")]'.format(
                 aaConfig.flightSeatFieldH,
                 aaConfig.flightAmountField,
-                aaConfig.flightSeatFieldT
+                aaConfig.flightSeatFieldT,
+                numDown
             )
         )
         parityBadge = self.browser.find_elements_by_xpath(
-            '//*[contains(@id, "{}{}{}1-")]'.format(
+            '//*[starts-with(@id, "{}") and contains(@id, "{}{}{}-")]'.format(
                 aaConfig.flightSeatFieldH,
                 aaConfig.flightBageField,
-                aaConfig.flightSeatFieldT
+                aaConfig.flightSeatFieldT,
+                numDown
             )
-        )[1:]
+        )
 
         parityFlat = self.browser.find_elements_by_xpath(
-            '//*[contains(@id, "{}{}{}1-")]'.format(
+            '//*[starts-with(@id, "{}") and contains(@id, "{}{}{}-")]'.format(
                 aaConfig.flightPrioritySeatFieldH,
                 aaConfig.flightAmountField,
-                aaConfig.flightSeatFieldT
+                aaConfig.flightSeatFieldT,
+                numDown
             )
-        )[1:]
+        )
         parityBadge2 = self.browser.find_elements_by_xpath(
-            '//*[contains(@id, "{}{}{}1-")]'.format(
+            '//*[starts-with(@id, "{}") and contains(@id, "{}{}{}-")]'.format(
                 aaConfig.flightPrioritySeatFieldH,
                 aaConfig.flightBageField,
-                aaConfig.flightSeatFieldT
+                aaConfig.flightSeatFieldT,
+                numDown
             )
-        )[1:]
+        )
 
-        # inconsistent list size
+        # 固定長度
+        if len(parityJourney) != len(parityJourney):
+            parityJourney = [None] * len(parityJourney)
+        if len(parityAmount) != len(parityJourney):
+            parityAmount = [None] * len(parityJourney)
         if len(parityBadge) != len(parityJourney):
             parityBadge = [None] * len(parityJourney)
         if len(parityFlat) != len(parityJourney):
             parityFlat = [None] * len(parityJourney)
+        if len(parityBadge2) != len(parityJourney):
             parityBadge2 = [None] * len(parityJourney)
+
+        # print(len(parityJourney))
+        # print(len(parityAmount))
+        # print(len(parityBadge))
+        # print(len(parityFlat))
+        # print(len(parityBadge2))
 
         # show each seat's price
         for pj, pa, pf, pb, pb2 in zip(parityJourney, parityAmount, parityFlat, parityBadge, parityBadge2):
             print("AutoAA: {}".format(pj.text))
-            print("AutoAA:     {}. normal seat price:      {} {} {}".format(
-                self.pricecounter - tps, pa.text, self.ct, "" if pb is None else pb.text
-            ))
-            self.pricecounter += 1
-            if pf is None:
+            if pa is None or pb is None:
+                print("AutoAA:     {}. normal seat price:      not available")
+            else:
+                print("AutoAA:     {}. normal seat price:      {} {} {}".format(
+                    self.pricecounter - tps, pa.text, self.ct, "" if pb is None else pb.text
+                ))
+                self.pricecounter += 1
+            if pf is None or pb2 is None:
                 print("AutoAA:     0. luxury flat seat:       not available")
             else:
                 print("AutoAA:     {}. luxury flat seat price: {} {} {}\n".format(
@@ -828,7 +770,7 @@ class AutoAA:
             )
 
             tmp2 = tmp.find_element_by_xpath(
-                './span[contains(@class, "{}")]'.format(
+                './/*[contains(@class, "{}")]'.format(
                     aaConfig.flightCheckIconField,
                 )
             )
