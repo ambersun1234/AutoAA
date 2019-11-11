@@ -784,11 +784,11 @@ class AutoAA:
             )
         ).text
         print("AutoAA: Total ticket price: {} {}".format(tp, self.ct))
-        print("AutoAA: press any key to continue")
-        trash = input()
         self.submit()
 
     def getSpecialOffer(self):
+        desiredVip = int(self.pr.vip)
+
         print("AutoAA: Processing special offer...")
         WebDriverWait(self.browser, 20).until(
             EC.visibility_of_element_located(
@@ -797,6 +797,60 @@ class AutoAA:
                 )
             )
         )
+
+        vipId = [
+            "value-pack-bundle",
+            "premium-flex-bundle",
+            "premium-flatbed"
+        ]
+        if desiredVip == 0:
+            print("AutoAA: No additional special offer required")
+        else:
+            # 點選 vip 等級
+            self.browser.find_element_by_id(
+                "{}{}{}".format(
+                    aaConfig.specialOfferVipHField,
+                    vipId[desiredVip - 1],
+                    aaConfig.specialOfferVipTField
+                )
+            ).click()
+
+            # 確認點選
+            tr = [
+                aaConfig.specialOfferVip1HField,
+                aaConfig.specialOfferVip2HField,
+                aaConfig.specialOfferVip3HField
+            ]
+            for index in range(0, len(tr)):
+                tmp = self.browser.find_elements_by_xpath(
+                    '//*[contains(@id, "{}")]'.format(
+                        tr[index]
+                    )
+                )
+                for element in tmp:
+                    # 取出各 vip 選取資訊
+                    name = element.find_element_by_class_name(
+                        aaConfig.specialOfferdrField
+                    ).text
+                    price = element.find_element_by_class_name(
+                        aaConfig.specialOfferPriceField
+                    ).text
+                    priceLabel = element.find_element_by_class_name(
+                        "price-label"
+                    ).text
+                    try:
+                        # 查看 vip 是否有被選取
+                        select = element.find_element_by_class_name(
+                            "selected"
+                        )
+                    except selenium.common.exceptions.NoSuchElementException:
+                        pass
+                    else:
+                        price = price.replace(priceLabel, "")
+                        print("AutoAA: vip{} {} {}".format(index + 1, name, price))
+        self.browser.find_element_by_id(
+            aaConfig.specialOfferBtnField
+        ).click()
 
     def validate(self, date_text):
         if len(date_text) != 10:

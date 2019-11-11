@@ -24,6 +24,7 @@ git clone https://github.com/ambersun1234/AutoAA.git
 + modify the user information inside `config.ini`
 + run program
     + simply `python3 air.py` or `python3 air.py show`
++ note: this ticket-snatching program is `actually not fully automatic`, thus user should stay in front of the computer and wait for AutoAA's instructions
 
 ## Config note
 + login section: contain your login information, user must register an account before using AutoAA
