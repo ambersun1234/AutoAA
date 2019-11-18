@@ -5,7 +5,8 @@ import os
 class aaConfigParser:
     def __init__(self):
         # new config parser to read ROOT/config/config.ini
-        self.config = configparser.ConfigParser()
+        self.config = configparser.ConfigParser(allow_no_value=True)
+        # https://stackoverflow.com/questions/335695/lists-in-configparser
 
         self.loginEmail      = None
         self.loginPassword   = None

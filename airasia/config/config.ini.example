@@ -15,3 +15,51 @@ returnDate    = 2020/03/19
 
 [service]
 vip           = 0
+
+[Adultinfo]
+a1            = [
+    YOURFIRSTNAME,
+    YOURLASTNAME,
+    2020/01/01,
+    F,
+    N
+]
+a2            = [
+    YOURFIRSTNAME,
+    YOURLASTNAME,
+    2020/01/01,
+    M,
+    N
+]
+
+[Childinfo]
+c1            = [
+    YOURFIRSTNAME,
+    YOURLASTNAME,
+    2020/01/01,
+    F,
+    N
+]
+c2            = [
+    YOURFIRSTNAME,
+    YOURLASTNAME,
+    2020/01/01,
+    M,
+    N
+]
+
+[Babyinfo]
+b1            = [
+    YOURFIRSTNAME,
+    YOURLASTNAME,
+    2020/01/01,
+    F,
+    N
+]
+b2            = [
+    YOURFIRSTNAME,
+    YOURLASTNAME,
+    2020/01/01,
+    M,
+    N
+]

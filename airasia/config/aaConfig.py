@@ -63,3 +63,4 @@ class aaConfig:
     specialOfferPriceField   = "bundle-flight-price"
     specialOfferCurrency     = "currency"
     specialOfferListField    = "bundle-lists ng-star-inserted"
+    infoPreinstalledField    = "adult-0-flying-heatmap"

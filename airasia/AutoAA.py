@@ -899,6 +899,15 @@ class AutoAA:
             aaConfig.specialOfferBtnField
         ).click()
 
+    def fillInfo(self):
+        # 隱性等待直到頁面載入完成
+        self.browser.implicitly_wait(10)
+
+        # 取消預填選項
+        self.browser.find_element_by_id(
+            aaConfig.infoPreinstalledField
+        ).click()
+
     def validate(self, date_text):
         if len(date_text) != 10:
             return False
