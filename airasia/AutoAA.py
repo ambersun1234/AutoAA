@@ -396,6 +396,8 @@ class AutoAA:
         oneDate = self.pr.flightDDate
         returnDate = self.pr.flightRDate
 
+        # 隱性等待直到頁面載入完成
+        self.browser.implicitly_wait(10)
         # 等待頁面載入完成
         WebDriverWait(self.browser, 20).until(
             EC.visibility_of_element_located(
@@ -414,6 +416,7 @@ class AutoAA:
                 )
             )
         )
+        self.browser.implicitly_wait(0)
 
         # 尋找當日班機
         checker = True
@@ -797,23 +800,59 @@ class AutoAA:
                 )
             )
         )
+        WebDriverWait(self.browser, 20).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH, '//*[contains(@class, "{}")]'.format(
+                        "bundle-item"
+                    )
+                )
+            )
+        )
 
         vipId = [
-            "value-pack-bundle",
-            "premium-flex-bundle",
-            "premium-flatbed"
+            aaConfig.specialOfferVip1HField,
+            aaConfig.specialOfferVip2HField,
+            aaConfig.specialOfferVip3HField
         ]
         if desiredVip == 0:
             print("AutoAA: No additional special offer required")
         else:
             # 點選 vip 等級
-            self.browser.find_element_by_id(
-                "{}{}{}".format(
-                    aaConfig.specialOfferVipHField,
-                    vipId[desiredVip - 1],
-                    aaConfig.specialOfferVipTField
+            # self.browser.find_element_by_id(
+            #     "{}{}{}".format(
+            #         aaConfig.specialOfferVipHField,
+            #         vipId[desiredVip - 1],
+            #         aaConfig.specialOfferVipTField
+            #     )
+            # ).click()
+            tmp = self.browser.find_elements_by_xpath(
+                '//*[contains(@class, "{} {}")]//div'.format(
+                    aaConfig.specialOfferVipOneField,
+                    aaConfig.specialOfferVipTwoField
                 )
-            ).click()
+            )
+            # 檢查是否已選擇
+            try:
+                tmp2 = tmp[desiredVip - 1].find_element_by_xpath(
+                    '//button[contains(@class, "{}")]'.format(
+                        aaConfig.specialOfferCheckField
+                    )
+                )
+            except selenium.common.exceptions.NoSuchElementException:
+                pass
+            else:
+                self.browser.find_elements_by_xpath(
+                    '//ul[@class="{}"]'.format(
+                        aaConfig.specialOfferListField
+                    )
+                )[desiredVip - 1].click()
+                lala = self.browser.find_element_by_xpath(
+                    '//div[starts-with(@id, "{}")]'.format(
+                        vipId[desiredVip - 1]
+                    )
+                )
+                selenium.webdriver.ActionChains(self.browser).click(lala).perform()
 
             # 確認點選
             tr = [
@@ -821,6 +860,7 @@ class AutoAA:
                 aaConfig.specialOfferVip2HField,
                 aaConfig.specialOfferVip3HField
             ]
+            priceLabel2 = None
             for index in range(0, len(tr)):
                 tmp = self.browser.find_elements_by_xpath(
                     '//*[contains(@id, "{}")]'.format(
@@ -834,10 +874,11 @@ class AutoAA:
                     ).text
                     price = element.find_element_by_class_name(
                         aaConfig.specialOfferPriceField
-                    ).text
+                    ).text.replace(" /", "")
                     priceLabel = element.find_element_by_class_name(
-                        "price-label"
-                    ).text
+                        aaConfig.specialOfferCurrency
+                    ).text.replace(" /", "")
+                    priceLabel2 = priceLabel
                     try:
                         # 查看 vip 是否有被選取
                         select = element.find_element_by_class_name(
@@ -847,7 +888,13 @@ class AutoAA:
                         pass
                     else:
                         price = price.replace(priceLabel, "")
-                        print("AutoAA: vip{} {} {}".format(index + 1, name, price))
+                        print("AutoAA: vip{} {} {}{}".format(index + 1, name, price, priceLabel))
+        price = self.browser.find_element_by_xpath(
+            '//div[@id="{}"]/span'.format(
+                aaConfig.flightTotalField
+            )
+        ).text
+        print("AutoAA: Total ticket price: {} {}".format(price, priceLabel2))
         self.browser.find_element_by_id(
             aaConfig.specialOfferBtnField
         ).click()
