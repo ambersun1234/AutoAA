@@ -21,6 +21,10 @@ class aaConfigParser:
 
         self.vip             = None
 
+        self.adultInfo       = list()
+        self.childrenInfo    = list()
+        self.babyInfo        = list()
+
     def __run__(self):
         currentDir = os.getcwd()
         targetFile = "{}/airasia/config/config.ini".format(currentDir)
@@ -45,6 +49,50 @@ class aaConfigParser:
 
             self.vip             = self.config["service"]["vip"]
 
+            tmp = self.config.items("Adultinfo")
+            for trash, value in tmp:
+                mytmp = value.split(",")
+                self.adultInfo.append(
+                    {
+                        "firstname":  mytmp[0],
+                        "lastname":   mytmp[1],
+                        "birthday":   mytmp[2],
+                        "gender":     mytmp[3],
+                        "wheelchair": mytmp[4]
+                    }
+                )
+
+            tmp = self.config.items("Childinfo")
+            for trash, value in tmp:
+                mytmp = value.split(",")
+                self.childrenInfo.append(
+                    {
+                        "firstname":  mytmp[0],
+                        "lastname":   mytmp[1],
+                        "birthday":   mytmp[2],
+                        "gender":     mytmp[3],
+                        "wheelchair": mytmp[4]
+                    }
+                )
+
+            tmp = self.config.items("Babyinfo")
+            for trash, value in tmp:
+                mytmp = value.split(",")
+                self.babyInfo.append(
+                    {
+                        "firstname":  mytmp[0],
+                        "lastname":   mytmp[1],
+                        "birthday":   mytmp[2],
+                        "gender":     mytmp[3],
+                        "wheelchair": mytmp[4]
+                    }
+                )
+
+            if len(self.adultInfo) != int(self.flightAdult) or \
+                len(self.childrenInfo) != int(self.flightChildren) or \
+                len(self.babyInfo) != int(self.flightBaby):
+                print("AutoAA: inconsistent ticket number and info found in ./config/config.ini. exit")
+                sys.exit(1)
             if None in (
                 self.loginEmail, self.loginPassword,
                 self.flightDeparture, self.flightArrival, self.flightAdult, self.flightChildren,

@@ -29,3 +29,5 @@ if __name__ == "__main__":
     runner.selectReturnPrice()
     print()
     runner.getSpecialOffer()
+    print()
+    runner.fillInfo()

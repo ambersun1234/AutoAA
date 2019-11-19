@@ -790,6 +790,7 @@ class AutoAA:
         self.submit()
 
     def getSpecialOffer(self):
+        priceLabel2 = None
         desiredVip = int(self.pr.vip)
 
         print("AutoAA: Processing special offer...")
@@ -860,7 +861,6 @@ class AutoAA:
                 aaConfig.specialOfferVip2HField,
                 aaConfig.specialOfferVip3HField
             ]
-            priceLabel2 = None
             for index in range(0, len(tr)):
                 tmp = self.browser.find_elements_by_xpath(
                     '//*[contains(@id, "{}")]'.format(

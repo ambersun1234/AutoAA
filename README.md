@@ -35,6 +35,12 @@ git clone https://github.com/ambersun1234/AutoAA.git
     + `1` stands for `Value Pack`: baggage allowance, standard seat selection and 1 meal
     + `2` stands for `Premium Flex`: baggage allowance, hot and standard seat selection, 1 meal, change of date time and lounge access
     + `3` stands for `Premium Flatbed`: baggage allowance, flatbed selection, 1 meal, change of date time, lounge access, entertainment access and baggage delivery
++ passenger info config file
+    + the default type is as follows
+    + `a2            = YOURFIRSTNAME,YOURLASTNAME,2020/01/01,F,N`
+    + you'll need to fill your personal information in predestinate order
+        + `first name, last name, birthday(date format as YYYY/MM/DD), physical gender(F, M), need wheelchair or not`
+        + and each of the column is separate by comma respectively, any incorrect input will terminate AutoAA immediately
 
 ## License
 + This project is licensed under MIT License - see the [LICENSE](https://github.com/ambersun1234/AutoAA/blob/master/LICENSE) file for detail
