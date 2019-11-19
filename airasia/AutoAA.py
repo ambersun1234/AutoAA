@@ -912,11 +912,109 @@ class AutoAA:
         # 隱性等待直到頁面載入完成
         self.browser.implicitly_wait(10)
 
+        # 等待 input 框框完成勾選
+        WebDriverWait(self.browser, 20).until(
+            EC.element_to_be_clickable(
+                (
+                    By.ID, aaConfig.infoPreinstalledField
+                )
+            )
+        )
+
         # 取消預填選項
         tmp = self.browser.find_element_by_id(
             aaConfig.infoPreinstalledField
         )
         selenium.webdriver.ActionChains(self.browser).click(tmp).perform()
+
+        # 填入旅客資料
+        tarr = [
+            "firstname", "lastname"#, "birthday"
+        ]
+        tarr2 = [
+            aaConfig.infoFirstNameField,
+            aaConfig.infoLastNameField#,
+            #aaConfig.infoBirthdayField
+        ]
+        for input, tid in zip(tarr, tarr2):
+            adultListCount    = 0
+            childrenListCount = 0
+            infantListCount   = 0
+            tmp = self.browser.find_elements_by_xpath(
+                '//input[contains(@id, "{}")]'.format(
+                    tid
+                )
+            )
+            for element in tmp:
+                tid = element.get_attribute("id")
+                tmmp = None
+                if "child" in tid:
+                    tmmp = self.pr.childrenInfo[childrenListCount].get(input, None)
+                    childrenListCount += 1
+                    self.checker(tmmp)
+                    element.send_keys(tmmp)
+                elif "infant" in tid:
+                    tmmp = self.pr.babyInfo[infantListCount].get(input, None)
+                    infantListCount += 1
+                    self.checker(tmmp)
+                    element.send_keys(tmmp)
+                elif "adult" in tid:
+                    tmmp = self.pr.adultInfo[adultListCount].get(input, None)
+                    adultListCount += 1
+                    self.checker(tmmp)
+                    element.send_keys(tmmp)
+                print("AutoAA: passenger {} info: {} filled in".format(input, tmmp))
+
+        # 填入性別
+        adultListCount    = 0
+        childrenListCount = 0
+        infantListCount   = 0
+        tmp = self.browser.find_elements_by_xpath(
+            '//div[@class="{}"]'.format(
+                aaConfig.infoGenderField
+            )
+        )
+        for element in tmp:
+            # 男性
+            m1 = element.find_element_by_xpath(
+                './/*[contains(@for, "{}")]'.format(
+                    aaConfig.infoMaleField
+                )
+            )
+            # 女性
+            f2 = element.find_element_by_xpath(
+                './/*[contains(@for, "{}")]'.format(
+                    aaConfig.infoFemaleField
+                )
+            )
+            tid = m1.get_attribute("for")
+            # 點選特定性別
+            tmmp = None
+            if "child" in tid:
+                tmmp = self.pr.childrenInfo[childrenListCount].get("gender", None)
+                childrenListCount += 1
+                self.checker(tmmp)
+                if tmmp == "F":
+                    selenium.webdriver.ActionChains(self.browser).click(m1).perform()
+                else:
+                    selenium.webdriver.ActionChains(self.browser).click(f2).perform()
+            elif "infant" in tid:
+                tmmp = self.pr.babyInfo[infantListCount].get("gender", None)
+                infantListCount += 1
+                self.checker(tmmp)
+                if tmmp == "F":
+                    selenium.webdriver.ActionChains(self.browser).click(m1).perform()
+                else:
+                    selenium.webdriver.ActionChains(self.browser).click(f2).perform()
+            elif "adult" in tid:
+                tmmp = self.pr.adultInfo[adultListCount].get("gender", None)
+                adultListCount += 1
+                self.checker(tmmp)
+                if tmmp == "F":
+                    selenium.webdriver.ActionChains(self.browser).click(m1).perform()
+                else:
+                    selenium.webdriver.ActionChains(self.browser).click(f2).perform()
+            print("AutoAA: passenger gender info: {} filled in".format(tmmp))
 
     def validate(self, date_text):
         if len(date_text) != 10:
@@ -927,6 +1025,11 @@ class AutoAA:
             return False
         else:
             return True
+
+    def checker(self, input):
+        if input is None:
+            print("AutoAA: passenger info None type found. exit")
+            sys.exit(1)
 
     def padding(self, date_text):
         return "{:%m/%d}".format(datetime.datetime.strptime(date_text, "%m/%d"))

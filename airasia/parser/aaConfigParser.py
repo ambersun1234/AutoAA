@@ -57,8 +57,7 @@ class aaConfigParser:
                         "firstname":  mytmp[0],
                         "lastname":   mytmp[1],
                         "birthday":   mytmp[2],
-                        "gender":     mytmp[3],
-                        "wheelchair": mytmp[4]
+                        "gender":     mytmp[3]
                     }
                 )
 
@@ -70,8 +69,7 @@ class aaConfigParser:
                         "firstname":  mytmp[0],
                         "lastname":   mytmp[1],
                         "birthday":   mytmp[2],
-                        "gender":     mytmp[3],
-                        "wheelchair": mytmp[4]
+                        "gender":     mytmp[3]
                     }
                 )
 
@@ -83,8 +81,7 @@ class aaConfigParser:
                         "firstname":  mytmp[0],
                         "lastname":   mytmp[1],
                         "birthday":   mytmp[2],
-                        "gender":     mytmp[3],
-                        "wheelchair": mytmp[4]
+                        "gender":     mytmp[3]
                     }
                 )
 
