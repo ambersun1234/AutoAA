@@ -13,6 +13,8 @@ class aaConfig:
     departureListField       = "home-origin-autocomplete-heatmaplist-"
     arrivalBoxField          = "home-destination-autocomplete-heatmapstation-combobox"
     arrivalListField         = "home-destination-autocomplete-heatmaplist-"
+    stationnameField         = "station-name"
+    stationcodeField         = "station-code"
     flightIdField            = "passenger"
     flightField1             = "numberic-selector-content"
     flightField2             = "ng-star-inserted"

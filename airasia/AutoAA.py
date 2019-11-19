@@ -211,14 +211,19 @@ class AutoAA:
             )
         )
         # get all arrival name
-        items = self.browser.find_element_by_id(
-            aaConfig.arrivalBoxField
-        ).find_elements_by_tag_name("li")
+        items = self.browser.find_elements_by_xpath(
+            '//*[starts-with(@id, "{}")]'.format(aaConfig.arrivalListField)
+        )
 
         # write to internal array list
         counter = 0
         for element in items:
-            tempF, tempA = element.text.split("\n")
+            tempF = element.find_element_by_class_name(
+                aaConfig.stationnameField
+            ).text
+            tempA = element.find_element_by_class_name(
+                aaConfig.stationcodeField
+            ).text
             self.arrivalFullNameList[counter]   = tempF
             self.arrivalAbbrevNameList[counter] = tempA
             # found config arrival location
@@ -240,14 +245,20 @@ class AutoAA:
         ).click()
 
         # get all departure name
-        items = self.browser.find_element_by_id(
-            aaConfig.departureBoxField
-        ).find_elements_by_tag_name("li")
+        items = self.browser.find_elements_by_xpath(
+            '//*[starts-with(@id, "{}")]'.format(aaConfig.departureListField)
+        )
+        # home-origin-autocomplete-heatmaplist-33
 
         # write to internal array list
         counter = 0
         for element in items:
-            tempF, tempA = element.text.split("\n")
+            tempF = element.find_element_by_class_name(
+                aaConfig.stationnameField
+            ).text
+            tempA = element.find_element_by_class_name(
+                aaConfig.stationcodeField
+            ).text
             self.departureFullNameList[counter]   = tempF
             self.departureAbbrevNameList[counter] = tempA
             # found config departure location
@@ -397,7 +408,7 @@ class AutoAA:
         returnDate = self.pr.flightRDate
 
         # 隱性等待直到頁面載入完成
-        self.browser.implicitly_wait(10)
+        self.browser.implicitly_wait(20)
         # 等待頁面載入完成
         WebDriverWait(self.browser, 20).until(
             EC.visibility_of_element_located(
