@@ -579,16 +579,14 @@ class AutoAA:
 
         # 固定長度
         # 固定長度
-        if len(parityJourney) != len(parityJourney):
-            parityJourney = [None] * len(parityJourney)
-        if len(parityAmount) != len(parityJourney):
-            parityAmount = [None] * len(parityJourney)
-        if len(parityBadge) != len(parityJourney):
-            parityBadge = [None] * len(parityJourney)
-        if len(parityFlat) != len(parityJourney):
-            parityFlat = [None] * len(parityJourney)
-        if len(parityBadge2) != len(parityJourney):
-            parityBadge2 = [None] * len(parityJourney)
+        if len(parityAmount) < len(parityJourney):
+            parityAmount.extend([None] * (len(parityJourney) - len(parityAmount)))
+        if len(parityBadge) < len(parityJourney):
+            parityBadge.extend([None] * (len(parityJourney) - len(parityBadge)))
+        if len(parityFlat) < len(parityJourney):
+            parityFlat.extend([None] * (len(parityJourney) - len(parityFlat)))
+        if len(parityBadge2) < len(parityJourney):
+            parityBadge2.extend([None] * (len(parityJourney) - len(parityBadge2)))
 
         # show each seat's price
         for pj, pa, pf, pb, pb2 in zip(parityJourney, parityAmount, parityFlat, parityBadge, parityBadge2):
