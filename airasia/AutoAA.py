@@ -902,9 +902,10 @@ class AutoAA:
         self.browser.implicitly_wait(10)
 
         # 取消預填選項
-        self.browser.find_element_by_id(
+        tmp = self.browser.find_element_by_id(
             aaConfig.infoPreinstalledField
-        ).click()
+        )
+        selenium.webdriver.ActionChains(self.browser).click(tmp).perform()
 
     def validate(self, date_text):
         if len(date_text) != 10:
