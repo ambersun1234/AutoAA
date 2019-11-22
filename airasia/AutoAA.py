@@ -272,7 +272,7 @@ class AutoAA:
 
     def __login__(self):
         # bring up login page
-        WebDriverWait(self.browser, 10).until(
+        WebDriverWait(self.browser, 60).until(
             EC.element_to_be_clickable(
                 (
                     By.XPATH, '//button[contains(@class, "{} {}")]'.format(
@@ -312,7 +312,7 @@ class AutoAA:
         # verify
         try:
             # get air asia user id on website
-            WebDriverWait(self.browser, 20).until(
+            WebDriverWait(self.browser, 60).until(
                 EC.element_to_be_clickable(
                     (
                         By.XPATH, '//*[contains(text(), "BIG會員帳號")]'
@@ -408,16 +408,16 @@ class AutoAA:
         returnDate = self.pr.flightRDate
 
         # 隱性等待直到頁面載入完成
-        self.browser.implicitly_wait(20)
+        self.browser.implicitly_wait(60)
         # 等待頁面載入完成
-        WebDriverWait(self.browser, 20).until(
+        WebDriverWait(self.browser, 60).until(
             EC.visibility_of_element_located(
                 (
                     By.ID, aaConfig.flightDepartureRightBtn
                 )
             )
         )
-        WebDriverWait(self.browser, 20).until(
+        WebDriverWait(self.browser, 60).until(
             EC.presence_of_element_located(
                 (
                     By.XPATH, '//*[contains(@class, "{} {}")]'.format(
@@ -475,14 +475,14 @@ class AutoAA:
                     )
                 ).click()
                 # 等待頁面載入完成
-                WebDriverWait(self.browser, 20).until(
+                WebDriverWait(self.browser, 60).until(
                     EC.visibility_of_element_located(
                         (
                             By.ID, aaConfig.flightDepartureRightBtn
                         )
                     )
                 )
-                WebDriverWait(self.browser, 20).until(
+                WebDriverWait(self.browser, 60).until(
                     EC.presence_of_element_located(
                         (
                             By.XPATH, '//*[contains(@class, "{} {}")]'.format(
@@ -496,14 +496,14 @@ class AutoAA:
 
     def selectDepaturePrice(self):
         # 等待頁面載入完成
-        WebDriverWait(self.browser, 20).until(
+        WebDriverWait(self.browser, 60).until(
             EC.visibility_of_element_located(
                 (
                     By.ID, aaConfig.flightDepartureRightBtn
                 )
             )
         )
-        WebDriverWait(self.browser, 20).until(
+        WebDriverWait(self.browser, 60).until(
             EC.presence_of_element_located(
                 (
                     By.XPATH, '//div[contains(@class, "{} {}")]'.format(
@@ -513,7 +513,7 @@ class AutoAA:
                 )
             )
         )
-        WebDriverWait(self.browser, 20).until(
+        WebDriverWait(self.browser, 60).until(
             EC.presence_of_element_located(
                 (
                     By.XPATH, '//*[contains(@id, "{}{}{}0-")]'.format(
@@ -654,14 +654,14 @@ class AutoAA:
 
     def selectReturnPrice(self):
         # 等待頁面載入完成
-        WebDriverWait(self.browser, 20).until(
+        WebDriverWait(self.browser, 60).until(
             EC.visibility_of_element_located(
                 (
                     By.ID, aaConfig.flightDepartureRightBtn
                 )
             )
         )
-        WebDriverWait(self.browser, 20).until(
+        WebDriverWait(self.browser, 60).until(
             EC.presence_of_element_located(
                 (
                     By.XPATH, '//div[contains(@class, "{} {}")]'.format(
@@ -803,22 +803,26 @@ class AutoAA:
         desiredVip = int(self.pr.vip)
 
         print("AutoAA: Processing special offer...")
-        WebDriverWait(self.browser, 20).until(
-            EC.visibility_of_element_located(
-                (
-                    By.ID, aaConfig.specialOfferBtnField
-                )
-            )
-        )
-        WebDriverWait(self.browser, 20).until(
-            EC.presence_of_element_located(
-                (
-                    By.XPATH, '//*[contains(@class, "{}")]'.format(
-                        "bundle-item"
+        try:
+            WebDriverWait(self.browser, 60).until(
+                EC.visibility_of_element_located(
+                    (
+                        By.ID, aaConfig.specialOfferBtnField
                     )
                 )
             )
-        )
+            WebDriverWait(self.browser, 60).until(
+                EC.presence_of_element_located(
+                    (
+                        By.XPATH, '//*[contains(@class, "{}")]'.format(
+                            "bundle-item"
+                        )
+                    )
+                )
+            )
+        except selenium.common.exceptions.TimeoutException as e:
+            print("AutoAA: special offer failed. exit")
+            sys.exit(1)
 
         vipId = [
             aaConfig.specialOfferVip1HField,
@@ -913,7 +917,7 @@ class AutoAA:
         self.browser.implicitly_wait(10)
 
         # 等待 input 框框完成勾選
-        WebDriverWait(self.browser, 20).until(
+        WebDriverWait(self.browser, 60).until(
             EC.element_to_be_clickable(
                 (
                     By.ID, aaConfig.infoPreinstalledField
