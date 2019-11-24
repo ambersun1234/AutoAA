@@ -618,11 +618,15 @@ class AutoAA:
                 self.pricecounter += 1
         print("AutoAA: please enter the desired flight price: ")
         while True:
-            chosen = int(input())
-            if chosen >= self.pricecounter or chosen <= 0:
-                print("AutoAA:     Error index, try again")
+            chosen = input()
+            if not chosen.isdigit():
+                print("AutoAA:     Invalid input, try again")
             else:
-                break
+                chosen = int(chosen)
+                if chosen >= self.pricecounter or chosen <= 0:
+                    print("AutoAA:     Error index, try again")
+                else:
+                    break
         try:
             # 點選選擇票價
             tmp = self.browser.find_element_by_id(
@@ -769,11 +773,15 @@ class AutoAA:
                 self.pricecounter += 1
         print("AutoAA: please enter the desired flight price: ")
         while True:
-            chosen = int(input())
-            if chosen >= (self.pricecounter - tps) or chosen <= 0:
-                print("AutoAA:     Error index, try again")
+            chosen = input()
+            if not chosen.isdigit():
+                print("AutoAA:     Invalid input, try again")
             else:
-                break
+                chosen = int(chosen)
+                if chosen >= self.pricecounter or chosen <= 0:
+                    print("AutoAA:     Error index, try again")
+                else:
+                    break
         try:
             # 點選選擇票價
             tempId = tflightBtn[tps + chosen - 1].get_attribute("id")
@@ -978,8 +986,16 @@ class AutoAA:
                 aaConfig.infoGenderField
             )
         )
+
+        def clicker(input, m, f):
+            if input == "F":
+                tmp = "document.getElementById('{}').click();".format(f.get_attribute("for"))
+                self.browser.execute_script(tmp)
+            else:
+                tmp = "document.getElementById('{}').click();".format(m.get_attribute("for"))
+                self.browser.execute_script(tmp)
+
         for element in tmp:
-            # 男性
             m1 = element.find_element_by_xpath(
                 './/*[contains(@for, "{}")]'.format(
                     aaConfig.infoMaleField
@@ -991,6 +1007,7 @@ class AutoAA:
                     aaConfig.infoFemaleField
                 )
             )
+
             tid = m1.get_attribute("for")
             # 點選特定性別
             tmmp = None
@@ -998,26 +1015,19 @@ class AutoAA:
                 tmmp = self.pr.childrenInfo[childrenListCount].get("gender", None)
                 childrenListCount += 1
                 self.checker(tmmp)
-                if tmmp == "F":
-                    selenium.webdriver.ActionChains(self.browser).click(m1).perform()
-                else:
-                    selenium.webdriver.ActionChains(self.browser).click(f2).perform()
+                clicker(tmmp, m1, f2)
+
             elif "infant" in tid:
                 tmmp = self.pr.babyInfo[infantListCount].get("gender", None)
                 infantListCount += 1
                 self.checker(tmmp)
-                if tmmp == "F":
-                    selenium.webdriver.ActionChains(self.browser).click(m1).perform()
-                else:
-                    selenium.webdriver.ActionChains(self.browser).click(f2).perform()
+                clicker(tmmp, m1, f2)
+
             elif "adult" in tid:
                 tmmp = self.pr.adultInfo[adultListCount].get("gender", None)
                 adultListCount += 1
                 self.checker(tmmp)
-                if tmmp == "F":
-                    selenium.webdriver.ActionChains(self.browser).click(m1).perform()
-                else:
-                    selenium.webdriver.ActionChains(self.browser).click(f2).perform()
+                clicker(tmmp, m1, f2)
             print("AutoAA: passenger gender info: {} filled in".format(tmmp))
 
     def validate(self, date_text):
