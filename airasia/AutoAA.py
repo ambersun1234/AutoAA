@@ -924,6 +924,15 @@ class AutoAA:
         # 隱性等待直到頁面載入完成
         self.browser.implicitly_wait(10)
 
+        # 確定已點選
+        # spinlock
+        while True:
+            tmp = self.browser.find_element_by_id(
+                aaConfig.infoPreinstalledField.replace("label-", "")
+            ).is_selected()
+            if tmp:
+                break
+
         # 等待 input 框框完成勾選
         WebDriverWait(self.browser, 60).until(
             EC.element_to_be_clickable(
@@ -941,12 +950,11 @@ class AutoAA:
 
         # 填入旅客資料
         tarr = [
-            "firstname", "lastname"#, "birthday"
+            "firstname", "lastname"
         ]
         tarr2 = [
             aaConfig.infoFirstNameField,
-            aaConfig.infoLastNameField#,
-            #aaConfig.infoBirthdayField
+            aaConfig.infoLastNameField
         ]
         for input, tid in zip(tarr, tarr2):
             adultListCount    = 0
@@ -1029,6 +1037,42 @@ class AutoAA:
                 self.checker(tmmp)
                 clicker(tmmp, m1, f2)
             print("AutoAA: passenger gender info: {} filled in".format(tmmp))
+
+        # 填入生日
+        adultListCount    = 0
+        childrenListCount = 0
+        infantListCount   = 0
+        tmp = self.browser.find_elements_by_xpath(
+            '//label[contains(@for, "{}")]'.format(
+                aaConfig.infoBirthdayField
+            )
+        )
+
+        def clicker(field, input):
+            tmp = "document.getElementById('{}').value = '{}';".format(field.get_attribute("for"), input)
+            self.browser.execute_script(tmp)
+
+        for element in tmp:
+            tid = element.get_attribute("for")
+            tmmp = None
+            if "child" in tid:
+                tmmp = self.pr.childrenInfo[childrenListCount].get("birthday", None)
+                childrenListCount += 1
+                self.validate(tmmp)
+                clicker(element, tmmp)
+
+            elif "infant" in tid:
+                tmmp = self.pr.babyInfo[infantListCount].get("birthday", None)
+                infantListCount += 1
+                self.validate(tmmp)
+                clicker(element, tmmp)
+
+            elif "adult" in tid:
+                tmmp = self.pr.adultInfo[adultListCount].get("birthday", None)
+                adultListCount += 1
+                self.validate(tmmp)
+                clicker(element, tmmp)
+            print("AutoAA: passenger birthday info: {} filled in".format(tmmp))
 
     def validate(self, date_text):
         if len(date_text) != 10:
