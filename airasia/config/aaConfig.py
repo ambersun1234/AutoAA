@@ -72,3 +72,6 @@ class aaConfig:
     infoGenderField          = "passenger-gender"
     infoMaleField            = "-gender-heatmap_1"
     infoFemaleField          = "-gender-heatmap_2"
+    contactEmailField        = "email"
+    contactTelField          = "contact-mobile-number"
+    contactNewsField         = "newsletter-option"

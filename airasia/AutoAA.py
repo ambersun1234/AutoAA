@@ -1074,6 +1074,28 @@ class AutoAA:
                 clicker(element, tmmp)
             print("AutoAA: passenger birthday info: {} filled in".format(tmmp))
 
+        # 填入 contact email
+        self.browser.find_element_by_id(
+            aaConfig.contactEmailField
+        ).clear()
+        self.browser.find_element_by_id(
+            aaConfig.contactEmailField
+        ).send_keys(self.pr.contactEmail)
+
+        # 填入 contact telephone
+        self.browser.find_element_by_id(
+            aaConfig.contactTelField
+        ).send_keys(self.pr.contactTel)
+
+        # 取消訂閱
+        tmp = self.browser.find_element_by_xpath(
+            '//label[contains(@for, "{}")]'.format(
+                aaConfig.contactNewsField
+            )
+        )
+        selenium.webdriver.ActionChains(self.browser).click(tmp).perform()
+
+
     def validate(self, date_text):
         if len(date_text) != 10:
             return False

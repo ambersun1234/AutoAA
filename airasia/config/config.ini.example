@@ -16,6 +16,10 @@ returnDate    = 2020/03/19
 [service]
 vip           = 0
 
+[contact]
+email         = YOUR@EMAIL.com
+tel           = YOURTELEPHONE
+
 [Adultinfo]
 a1            = YOURFIRSTNAME,YOURLASTNAME,2020/01/01,F
 a2            = YOURFIRSTNAME,YOURLASTNAME,2020/01/01,F
