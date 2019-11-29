@@ -874,7 +874,7 @@ class AutoAA:
                         vipId[desiredVip - 1]
                     )
                 )
-                selenium.webdriver.ActionChains(self.browser).click(lala).perform()
+                selenium.webdriver.ActionChains(self.browser).move_to_element(lala).click(lala).perform()
 
             # 確認點選
             tr = [
@@ -946,7 +946,7 @@ class AutoAA:
         tmp = self.browser.find_element_by_id(
             aaConfig.infoPreinstalledField
         )
-        selenium.webdriver.ActionChains(self.browser).click(tmp).perform()
+        selenium.webdriver.ActionChains(self.browser).move_to_element(tmp).click(tmp).perform()
 
         # 填入旅客資料
         tarr = [
@@ -1093,7 +1093,7 @@ class AutoAA:
                 aaConfig.contactNewsField
             )
         )
-        selenium.webdriver.ActionChains(self.browser).click(tmp).perform()
+        selenium.webdriver.ActionChains(self.browser).move_to_element(tmp).click(tmp).perform()
 
 
     def validate(self, date_text):
