@@ -75,3 +75,4 @@ class aaConfig:
     contactEmailField        = "email"
     contactTelField          = "contact-mobile-number"
     contactNewsField         = "newsletter-option"
+    noFlightField            = "unavailable-flights-container"

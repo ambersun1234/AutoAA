@@ -513,7 +513,17 @@ class AutoAA:
                 )
             )
         )
-        WebDriverWait(self.browser, 60).until(
+
+        tmp = self.browser.find_elements_by_xpath(
+            '//div[contains(@class, "{}")]'.format(
+                aaConfig.noFlightField
+            )
+        )
+        if tmp:
+            print("AutoAA: No flights in the desired time. exit")
+            sys.exit(1)
+
+        WebDriverWait(self.browser, 10).until(
             EC.presence_of_element_located(
                 (
                     By.XPATH, '//*[contains(@id, "{}{}{}0-")]'.format(
@@ -525,17 +535,17 @@ class AutoAA:
             )
         )
 
-        tps = self.pricecounter - 1
-        print("AutoAA: Querying departure flight price...")
-
         try:
+            tps = self.pricecounter - 1
+            print("AutoAA: Querying departure flight price...")
+
             # find all price button
             tflightBtn = self.browser.find_elements_by_xpath(
                 '//*[contains(@id, "{}")]'.format(
                     aaConfig.flightChoosePriceField
                 )
             )
-        except selenium.common.exceptions.NoSuchElementException:
+        except selenium.common.exceptions.NoSuchElementException or selenium.common.exceptions.TimeoutException:
             print("AutoAA: No flights in the desired time. exit")
             sys.exit(1)
 
@@ -933,6 +943,15 @@ class AutoAA:
             if tmp:
                 break
 
+        WebDriverWait(self.browser, 60).until(
+            EC.presence_of_element_located(
+                (
+                    By.XPATH, '//div[contains(@class, "{}")]'.format(
+                        "icon-done"
+                    )
+                )
+            )
+        )
         # 等待 input 框框完成勾選
         WebDriverWait(self.browser, 60).until(
             EC.element_to_be_clickable(
@@ -942,11 +961,11 @@ class AutoAA:
             )
         )
 
-        # 取消預填選項
-        tmp = self.browser.find_element_by_id(
-            aaConfig.infoPreinstalledField
-        )
-        selenium.webdriver.ActionChains(self.browser).move_to_element(tmp).click(tmp).perform()
+        # # 取消預填選項
+        # tmp = self.browser.find_element_by_id(
+        #     aaConfig.infoPreinstalledField
+        # )
+        # selenium.webdriver.ActionChains(self.browser).move_to_element(tmp).click(tmp).perform()
 
         # 填入旅客資料
         tarr = [
@@ -964,7 +983,7 @@ class AutoAA:
                 '//input[contains(@id, "{}")]'.format(
                     tid
                 )
-            )
+            )[1:]
             for element in tmp:
                 tid = element.get_attribute("id")
                 tmmp = None

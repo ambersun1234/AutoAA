@@ -91,6 +91,9 @@ class aaConfigParser:
                     }
                 )
 
+            # if (int(self.flightAdult) != 0 and (len(self.adultInfo) + 1 != int(self.flightAdult))) or \
+            #     (int(self.flightChildren) != 0 and (len(self.childrenInfo) + 1 != int(self.flightChildren))) or \
+            #     (int(self.flightBaby) != 0 and (len(self.babyInfo) + 1 != int(self.flightBaby))):
             if len(self.adultInfo) != int(self.flightAdult) or \
                 len(self.childrenInfo) != int(self.flightChildren) or \
                 len(self.babyInfo) != int(self.flightBaby):
