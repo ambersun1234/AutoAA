@@ -33,21 +33,25 @@ class aaConfigParser:
         if os.path.isfile(targetFile):
             self.config.read(targetFile)
 
-            # read ini data to variable
-            self.loginEmail      = self.config["login"]["email"]
-            self.loginPassword   = self.config["login"]["password"]
+            try:
+                # read ini data to variable
+                self.loginEmail      = self.config["login"]["email"]
+                self.loginPassword   = self.config["login"]["password"]
 
-            self.flightDeparture = self.config["flight"]["departure"]
-            self.flightArrival   = self.config["flight"]["arrival"]
-            self.flightAdult     = self.config["flight"]["adult"]
-            self.flightChildren  = self.config["flight"]["children"]
-            self.flightBaby      = self.config["flight"]["baby"]
-            self.flightOne       = self.config["flight"]["oneway"]
-            self.flightReturn    = self.config["flight"]["return"]
-            self.flightDDate     = self.config["flight"]["departureDate"]
-            self.flightRDate     = self.config["flight"]["returnDate"]
-            self.contactEmail    = self.config["contact"]["email"]
-            self.contactTel      = self.config["contact"]["tel"]
+                self.flightDeparture = self.config["flight"]["departure"]
+                self.flightArrival   = self.config["flight"]["arrival"]
+                self.flightAdult     = self.config["flight"]["adult"]
+                self.flightChildren  = self.config["flight"]["children"]
+                self.flightBaby      = self.config["flight"]["baby"]
+                self.flightOne       = self.config["flight"]["oneway"]
+                self.flightReturn    = self.config["flight"]["return"]
+                self.flightDDate     = self.config["flight"]["departureDate"]
+                self.flightRDate     = self.config["flight"]["returnDate"]
+                self.contactEmail    = self.config["contact"]["email"]
+                self.contactTel      = self.config["contact"]["tel"]
+            except KeyError as e:
+                print("AutoAA: config.ini missing arguments. stop")
+                sys.exit(1)
 
             self.vip             = self.config["service"]["vip"]
 
