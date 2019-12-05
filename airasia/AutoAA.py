@@ -962,59 +962,37 @@ class AutoAA:
         )
 
         # # 取消預填選項
-        # tmp = self.browser.find_element_by_id(
-        #     aaConfig.infoPreinstalledField
-        # )
-        # selenium.webdriver.ActionChains(self.browser).move_to_element(tmp).click(tmp).perform()
+        tmp = self.browser.find_element_by_id(
+            aaConfig.infoPreinstalledField
+        )
+        selenium.webdriver.ActionChains(self.browser).move_to_element(tmp).click(tmp).perform()
 
         # 填入旅客資料
-        tarr = [
-            "firstname", "lastname"
+        tarrName = [
+            "firstname", "lastname", "gender", "birthday"
         ]
-        tarr2 = [
-            aaConfig.infoFirstNameField,
-            aaConfig.infoLastNameField
-        ]
-        for input, tid in zip(tarr, tarr2):
-            adultListCount    = 0
-            childrenListCount = 0
-            infantListCount   = 0
-            tmp = self.browser.find_elements_by_xpath(
-                '//input[contains(@id, "{}")]'.format(
-                    tid
-                )
-            )[1:]
-            for element in tmp:
-                tid = element.get_attribute("id")
-                tmmp = None
-                if "child" in tid:
-                    tmmp = self.pr.childrenInfo[childrenListCount].get(input, None)
-                    childrenListCount += 1
-                    self.checker(tmmp)
-                    element.send_keys(tmmp)
-                elif "infant" in tid:
-                    tmmp = self.pr.babyInfo[infantListCount].get(input, None)
-                    infantListCount += 1
-                    self.checker(tmmp)
-                    element.send_keys(tmmp)
-                elif "adult" in tid:
-                    tmmp = self.pr.adultInfo[adultListCount].get(input, None)
-                    adultListCount += 1
-                    self.checker(tmmp)
-                    element.send_keys(tmmp)
-                print("AutoAA: passenger {} info: {} filled in".format(input, tmmp))
-
-        # 填入性別
-        adultListCount    = 0
-        childrenListCount = 0
-        infantListCount   = 0
-        tmp = self.browser.find_elements_by_xpath(
+        tarrXpath = [
+            '//input[contains(@id, "{}")]'.format(
+                aaConfig.infoFirstNameField
+            ),
+            '//input[contains(@id, "{}")]'.format(
+                aaConfig.infoLastNameField
+            ),
             '//div[@class="{}"]'.format(
                 aaConfig.infoGenderField
+            ),
+            '//label[contains(@for, "{}")]'.format(
+                aaConfig.infoBirthdayField
+            ),
+            './/*[contains(@for, "{}")]'.format(
+                aaConfig.infoMaleField
+            ),
+            './/*[contains(@for, "{}")]'.format(
+                aaConfig.infoFemaleField
             )
-        )
+        ]
 
-        def clicker(input, m, f):
+        def _clicker(input, m, f):
             if input == "F":
                 tmp = "document.getElementById('{}').click();".format(f.get_attribute("for"))
                 self.browser.execute_script(tmp)
@@ -1022,76 +1000,115 @@ class AutoAA:
                 tmp = "document.getElementById('{}').click();".format(m.get_attribute("for"))
                 self.browser.execute_script(tmp)
 
-        for element in tmp:
-            m1 = element.find_element_by_xpath(
-                './/*[contains(@for, "{}")]'.format(
-                    aaConfig.infoMaleField
-                )
-            )
-            # 女性
-            f2 = element.find_element_by_xpath(
-                './/*[contains(@for, "{}")]'.format(
-                    aaConfig.infoFemaleField
-                )
-            )
-
-            tid = m1.get_attribute("for")
-            # 點選特定性別
-            tmmp = None
-            if "child" in tid:
-                tmmp = self.pr.childrenInfo[childrenListCount].get("gender", None)
-                childrenListCount += 1
-                self.checker(tmmp)
-                clicker(tmmp, m1, f2)
-
-            elif "infant" in tid:
-                tmmp = self.pr.babyInfo[infantListCount].get("gender", None)
-                infantListCount += 1
-                self.checker(tmmp)
-                clicker(tmmp, m1, f2)
-
-            elif "adult" in tid:
-                tmmp = self.pr.adultInfo[adultListCount].get("gender", None)
-                adultListCount += 1
-                self.checker(tmmp)
-                clicker(tmmp, m1, f2)
-            print("AutoAA: passenger gender info: {} filled in".format(tmmp))
-
-        # 填入生日
-        adultListCount    = 0
-        childrenListCount = 0
-        infantListCount   = 0
-        tmp = self.browser.find_elements_by_xpath(
-            '//label[contains(@for, "{}")]'.format(
-                aaConfig.infoBirthdayField
-            )
-        )
-
         def clicker(field, input):
             tmp = "document.getElementById('{}').value = '{}';".format(field.get_attribute("for"), input)
             self.browser.execute_script(tmp)
 
-        for element in tmp:
-            tid = element.get_attribute("for")
+        # 建立旅客連結
+        guest = []
+        guest.extend(["a"] * int(self.pr.flightAdult))
+        guest.extend(["b"] * int(self.pr.flightBaby))
+        guest.extend(["c"] * int(self.pr.flightChildren))
+        totalTraveler = int(self.pr.flightAdult) + int(self.pr.flightBaby) + int(self.pr.flightChildren)
+
+        # 建立輸入格
+        travelerFirstName = self.browser.find_elements_by_xpath(tarrXpath[0])
+        travelerLastName  = self.browser.find_elements_by_xpath(tarrXpath[1])
+        travelerGender    = self.browser.find_elements_by_xpath(tarrXpath[2])
+        travelerBirthday  = self.browser.find_elements_by_xpath(tarrXpath[3])
+        travelerMale      = self.browser.find_elements_by_xpath(tarrXpath[4])
+        travelerFemale    = self.browser.find_elements_by_xpath(tarrXpath[5])
+
+        adultListCount    = 0
+        childrenListCount = 0
+        infantListCount   = 0
+        # 填寫每位旅客資訊
+        for counter in range(0, totalTraveler):
+            # 填入 first name
+            tag = "firstname"
+            tid = travelerFirstName[counter].get_attribute("id")
             tmmp = None
             if "child" in tid:
-                tmmp = self.pr.childrenInfo[childrenListCount].get("birthday", None)
-                childrenListCount += 1
+                tmmp = self.pr.childrenInfo[childrenListCount].get(tag, None)
+                self.checker(tmmp)
+                travelerFirstName[counter].send_keys(tmmp)
+            elif "infant" in tid:
+                tmmp = self.pr.babyInfo[infantListCount].get(tag, None)
+                self.checker(tmmp)
+                travelerFirstName[counter].send_keys(tmmp)
+            elif "adult" in tid:
+                tmmp = self.pr.adultInfo[adultListCount].get(tag, None)
+                self.checker(tmmp)
+                travelerFirstName[counter].send_keys(tmmp)
+            print("AutoAA: passenger {} info: {} filled in".format(tag, tmmp))
+
+            # 填入 last name
+            tag = "lastname"
+            tid = travelerLastName[counter].get_attribute("id")
+            tmmp = None
+            if "child" in tid:
+                tmmp = self.pr.childrenInfo[childrenListCount].get(tag, None)
+                self.checker(tmmp)
+                travelerLastName[counter].send_keys(tmmp)
+            elif "infant" in tid:
+                tmmp = self.pr.babyInfo[infantListCount].get(tag, None)
+                self.checker(tmmp)
+                travelerLastName[counter].send_keys(tmmp)
+            elif "adult" in tid:
+                tmmp = self.pr.adultInfo[adultListCount].get(tag, None)
+                self.checker(tmmp)
+                travelerLastName[counter].send_keys(tmmp)
+            print("AutoAA: passenger {} info: {} filled in".format(tag, tmmp))
+
+            # 填入生日
+            tag = "birthday"
+            tid = travelerBirthday[counter].get_attribute("for")
+            tmmp = None
+            if "child" in tid:
+                tmmp = self.pr.childrenInfo[childrenListCount].get(tag, None)
                 self.validate(tmmp)
-                clicker(element, tmmp)
+                clicker(travelerBirthday[counter], tmmp)
 
             elif "infant" in tid:
-                tmmp = self.pr.babyInfo[infantListCount].get("birthday", None)
-                infantListCount += 1
+                tmmp = self.pr.babyInfo[infantListCount].get(tag, None)
                 self.validate(tmmp)
-                clicker(element, tmmp)
+                clicker(travelerBirthday[counter], tmmp)
 
             elif "adult" in tid:
-                tmmp = self.pr.adultInfo[adultListCount].get("birthday", None)
-                adultListCount += 1
+                tmmp = self.pr.adultInfo[adultListCount].get(tag, None)
                 self.validate(tmmp)
-                clicker(element, tmmp)
-            print("AutoAA: passenger birthday info: {} filled in".format(tmmp))
+                clicker(travelerBirthday[counter], tmmp)
+            print("AutoAA: passenger {} info: {} filled in".format(tag, tmmp))
+
+            # 填入性別
+            tag = "gender"
+            tid = travelerMale[counter].get_attribute("for")
+            tmmp = None
+            if "child" in tid:
+                tmmp = self.pr.childrenInfo[childrenListCount].get(tag, None)
+                self.checker(tmmp)
+                _clicker(tmmp, travelerMale[counter], travelerFemale[counter])
+
+            elif "infant" in tid:
+                tmmp = self.pr.babyInfo[infantListCount].get(tag, None)
+                self.checker(tmmp)
+                _clicker(tmmp, travelerMale[counter], travelerFemale[counter])
+
+            elif "adult" in tid:
+                tmmp = self.pr.adultInfo[adultListCount].get(tag, None)
+                self.checker(tmmp)
+                _clicker(tmmp, travelerMale[counter], travelerFemale[counter])
+            print("AutoAA: passenger {} info: {} filled in".format(tag, tmmp))
+
+            # 更新人數
+            if "child" in tid:
+                childrenListCount += 1
+            elif "infant" in tid:
+                infantListCount   += 1
+            elif "adult" in tid:
+                adultListCount    += 1
+            print()
+            time.sleep(0.2)
 
         # 填入 contact email
         self.browser.find_element_by_id(
@@ -1113,7 +1130,6 @@ class AutoAA:
             )
         )
         selenium.webdriver.ActionChains(self.browser).move_to_element(tmp).click(tmp).perform()
-
 
     def validate(self, date_text):
         if len(date_text) != 10:
