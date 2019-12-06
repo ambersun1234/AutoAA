@@ -17,6 +17,7 @@ class AutoAA:
         self.pr = aaConfigParser()
         self.url = "https://www.airasia.com/zh/tw"
         self.pricecounter = 1
+        self.show = show
 
         self.departureFullNameList = dict()
         self.departureAbbrevNameList = dict()
@@ -24,14 +25,18 @@ class AutoAA:
         self.arrivalAbbrevNameList = dict()
 
         self.pr.__run__() # read user's config
+        self.startTime = datetime.datetime.strptime(self.pr.startTime, "%Y/%m/%d %H:%M:%S")
+        self.frequency = int(self.pr.frequency)
 
+    def __start__(self):
         try:
+            self.pricecounter = 1
             # prevent to open another new chrome window
             options = webdriver.ChromeOptions()
             options.add_argument("--headless")
 
             # command line argument
-            if show == "show":
+            if self.show == "show":
                 self.browser = webdriver.Chrome(
                     executable_path='/usr/local/bin/chromedriver'
                 )
@@ -1129,6 +1134,7 @@ class AutoAA:
             )
         )
         selenium.webdriver.ActionChains(self.browser).move_to_element(tmp).click(tmp).perform()
+        self.browser.quit()
 
     def validate(self, date_text):
         if len(date_text) != 10:

@@ -9,6 +9,10 @@ Automatic ticket crawler for air asia
 ## Privacy Policy
 + We have a simple [Privacy Policy](./policy.md) where we state how we handle your information
 
+## Todo list
++ Credit card fill in
++ Actual purchase airline ticket
+
 ## Clone Repo
 ```=1
 git clone https://github.com/ambersun1234/AutoAA.git
