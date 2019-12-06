@@ -25,8 +25,12 @@ class AutoAA:
         self.arrivalAbbrevNameList = dict()
 
         self.pr.__run__() # read user's config
-        self.startTime = datetime.datetime.strptime(self.pr.startTime, "%Y/%m/%d %H:%M:%S")
-        self.frequency = int(self.pr.frequency)
+        try:
+            self.startTime = datetime.datetime.strptime(self.pr.startTime, "%Y/%m/%d %H:%M:%S")
+            self.frequency = int(self.pr.frequency)
+        except ValueError as e:
+            print("AutoAA: start time format incorrect. abort")
+            sys.exit(1)
 
     def __start__(self):
         try:
@@ -793,7 +797,7 @@ class AutoAA:
                 print("AutoAA:     Invalid input, try again")
             else:
                 chosen = int(chosen)
-                if chosen >= self.pricecounter or chosen <= 0:
+                if chosen >= (self.pricecounter - tps) or chosen <= 0:
                     print("AutoAA:     Error index, try again")
                 else:
                     break

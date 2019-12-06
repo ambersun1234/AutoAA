@@ -1,5 +1,5 @@
 # AutoAA
-Automatic ticket crawler for air asia
+Automatic ticket crawler for Air Asia airline
 
 ## Disclaimer
 + This article is for **educational usage**, user's implementation belongs to one's personal behavior
@@ -31,6 +31,7 @@ git clone https://github.com/ambersun1234/AutoAA.git
 + note: this ticket-snatching program is `actually not fully automatic`, thus user should stay in front of the computer and wait for AutoAA's instructions
 
 ## Config note
++ time section: user can specify program execute time via `config.ini`, `startTime(date format as YYYY/MM/DD HH:MM:SS)` and `frequency(retry time)`
 + login section: contain your login information, user must register an account before using AutoAA
 + flight section: departure and arrival should fill in `full station name` or `abbreviation`
 + flight section: departure date and returnDate should follow standard date formate(e.g. 2020/01/23)

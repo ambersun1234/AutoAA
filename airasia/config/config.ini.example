@@ -1,3 +1,7 @@
+[time]
+startTime = 2019/12/06 21:45:00
+frequency = 3
+
 [login]
 email     = YOUR@EMAIL.com
 password  = YOURPASSWORD

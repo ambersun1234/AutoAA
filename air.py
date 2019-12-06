@@ -29,9 +29,10 @@ if __name__ == "__main__":
                 end="\r"
             )
     else:
+        print("\nsetup start time: {}\n".format(st))
         print("countdown: \n0")
 
-    # 總測試次數
+    # 重試次數
     for index in range(0, frequency):
         print()
         runner.__start__()

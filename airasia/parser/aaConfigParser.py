@@ -105,7 +105,7 @@ class aaConfigParser:
                 len(self.babyInfo) != int(self.flightBaby):
                 print("AutoAA: inconsistent ticket number and info found in ./config/config.ini. exit")
                 sys.exit(1)
-            if "" in (
+            if None or "" in (
                 self.startTime, self.frequency,
                 self.loginEmail, self.loginPassword,
                 self.flightDeparture, self.flightArrival, self.flightAdult, self.flightChildren,
