@@ -23,18 +23,18 @@ if __name__ == "__main__":
             ct = datetime.datetime.now()
             if ct > st:
                 break
-            print("{}    ".format(
+            print("{} seconds    ".format(
                 int((st - ct).total_seconds())
                 ),
                 end="\r"
             )
     else:
         print("\nsetup start time: {}\n".format(st))
-        print("countdown: \n0")
+        print("countdown: \n0 seconds")
 
     # 重試次數
     for index in range(0, frequency):
-        print()
+        print("\nAutoAA: {} attempts".format(index + 1))
         runner.__start__()
         runner.__login__()
         print()

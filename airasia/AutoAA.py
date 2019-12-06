@@ -212,7 +212,7 @@ class AutoAA:
             ).click()
 
     def getArrivalList(self, configArrival):
-        print("AutoAA: Get departure list... ", end="")
+        print("AutoAA: Get arrival list... ", end="")
         # bring up arrival list
         WebDriverWait(self.browser, 3).until(
             EC.element_to_be_clickable(
@@ -281,7 +281,7 @@ class AutoAA:
 
     def __login__(self):
         # bring up login page
-        WebDriverWait(self.browser, 60).until(
+        WebDriverWait(self.browser, 30).until(
             EC.element_to_be_clickable(
                 (
                     By.XPATH, '//button[contains(@class, "{} {}")]'.format(
@@ -522,6 +522,7 @@ class AutoAA:
                 )
             )
         )
+        time.sleep(2)
 
         tmp = self.browser.find_elements_by_xpath(
             '//div[contains(@class, "{}")]'.format(
@@ -969,12 +970,14 @@ class AutoAA:
                 )
             )
         )
+        time.sleep(3)
 
         # # 取消預填選項
         tmp = self.browser.find_element_by_id(
             aaConfig.infoPreinstalledField
         )
         selenium.webdriver.ActionChains(self.browser).move_to_element(tmp).click(tmp).perform()
+        time.sleep(0.5)
 
         # 填入旅客資料
         tarrName = [
