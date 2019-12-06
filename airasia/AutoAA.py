@@ -30,6 +30,7 @@ class AutoAA:
 
     def __start__(self):
         try:
+            self.pricecounter = 1
             # prevent to open another new chrome window
             options = webdriver.ChromeOptions()
             options.add_argument("--headless")

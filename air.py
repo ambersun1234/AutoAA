@@ -17,12 +17,19 @@ if __name__ == "__main__":
     frequency = runner.frequency
 
     # 倒計時
-    print("countdown: ", end="")
-    while True:
-        ct = datetime.datetime.now()
-        print("\b\b\b\b\b\b\b\b\b\b\b\b\b\b{}".format(st - ct), end="", flush=True)
-        if ct > st:
-            break
+    if datetime.datetime.now() < st:
+        print("\nsetup start time: {}\ncountdown: ".format(st))
+        while True:
+            ct = datetime.datetime.now()
+            if ct > st:
+                break
+            print("{}    ".format(
+                int((st - ct).total_seconds())
+                ),
+                end="\r"
+            )
+    else:
+        print("countdown: \n0")
 
     # 總測試次數
     for index in range(0, frequency):
