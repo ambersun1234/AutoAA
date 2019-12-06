@@ -8,6 +8,9 @@ class aaConfigParser:
         self.config = configparser.ConfigParser(allow_no_value=True)
         # https://stackoverflow.com/questions/335695/lists-in-configparser
 
+        self.startTime       = None
+        self.frequency       = None
+
         self.loginEmail      = None
         self.loginPassword   = None
 
@@ -35,6 +38,9 @@ class aaConfigParser:
 
             try:
                 # read ini data to variable
+                self.startTime       = self.config["time"]["startTime"]
+                self.frequency       = self.config["time"]["frequency"]
+
                 self.loginEmail      = self.config["login"]["email"]
                 self.loginPassword   = self.config["login"]["password"]
 
@@ -100,6 +106,7 @@ class aaConfigParser:
                 print("AutoAA: inconsistent ticket number and info found in ./config/config.ini. exit")
                 sys.exit(1)
             if "" in (
+                self.startTime, self.frequency,
                 self.loginEmail, self.loginPassword,
                 self.flightDeparture, self.flightArrival, self.flightAdult, self.flightChildren,
                 self.flightBaby, self.flightOne, self.flightReturn, self.flightDDate,
