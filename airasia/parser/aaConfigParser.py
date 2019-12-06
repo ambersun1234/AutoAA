@@ -99,13 +99,13 @@ class aaConfigParser:
                 len(self.babyInfo) != int(self.flightBaby):
                 print("AutoAA: inconsistent ticket number and info found in ./config/config.ini. exit")
                 sys.exit(1)
-            if None in (
+            if "" in (
                 self.loginEmail, self.loginPassword,
                 self.flightDeparture, self.flightArrival, self.flightAdult, self.flightChildren,
                 self.flightBaby, self.flightOne, self.flightReturn, self.flightDDate,
                 self.flightRDate, self.vip, self.contactEmail, self.contactTel
             ):
-                print("AutoAA: None type variable found in ./config/config.ini. exit")
+                print("AutoAA: Empty variable found in ./config/config.ini. exit")
                 sys.exit(1)
             else:
                 print("AutoAA: ./config/config.ini read done")
